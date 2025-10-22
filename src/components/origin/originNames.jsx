@@ -1,0 +1,105 @@
+// All provinces from the Filipino Emigrants dataset
+export const originNames = [
+  // Region I - Ilocos Region
+  "ILOCOS NORTE", "ILOCOS SUR", "LA UNION", "PANGASINAN",
+  
+  // Region II - Cagayan Valley
+  "BATANES", "CAGAYAN", "ISABELA", "NUEVA VIZCAYA", "QUIRINO",
+  
+  // Region III - Central Luzon
+  "AURORA", "BATAAN", "BULACAN", "NUEVA ECIJA", "PAMPANGA", "TARLAC", "ZAMBALES",
+  
+  // Region IV-A CALABARZON
+  "BATANGAS", "CAVITE", "LAGUNA", "QUEZON", "RIZAL",
+  
+  // Region IV-B MIMAROPA
+  "MARINDUQUE", "OCCIDENTAL MINDORO", "ORIENTAL MINDORO", "PALAWAN", "ROMBLON",
+  
+  // Region V - Bicol Region
+  "ALBAY", "CAMARINES NORTE", "CAMARINES SUR", "CATANDUANES", "MASBATE", "SORSOGON",
+  
+  // Region VI - Western Visayas
+  "AKLAN", "ANTIQUE", "CAPIZ", "GUIMARAS", "ILOILO", "NEGROS OCCIDENTAL",
+  
+  // Region VII - Central Visayas
+  "BOHOL", "CEBU", "NEGROS ORIENTAL", "SIQUIJOR",
+  
+  // Region VIII - Eastern Visayas
+  "BILIRAN", "EASTERN SAMAR", "LEYTE", "NORTHERN SAMAR", "SAMAR (WESTERN SAMAR)", "SOUTHERN LEYTE",
+  
+  // Region IX - Zamboanga Peninsula
+  "ZAMBOANGA DEL NORTE", "ZAMBOANGA DEL SUR", "ZAMBOANGA SIBUGAY", "ISABELA CITY, (BASILAN)",
+  
+  // Region X - Northern Mindanao
+  "BUKIDNON", "CAMIGUIN", "LANAO DEL NORTE", "MISAMIS OCCIDENTAL", "MISAMIS ORIENTAL",
+  
+  // Region XI - Davao Region
+  "COMPOSTELA VALLEY", "DAVAO DEL NORTE", "DAVAO DEL SUR", "DAVAO ORIENTAL",
+  
+  // Region XII - SOCCSKSARGEN
+  "COTABATO CITY", "NORTH COTABATO", "SARANGANI", "SOUTH COTABATO", "SULTAN KUDARAT",
+  
+  // Region XIII - Caraga
+  "AGUSAN DEL NORTE", "AGUSAN DEL SUR", "SURIGAO DEL NORTE", "SURIGAO DEL SUR",
+  
+  // ARMM
+  "BASILAN", "LANAO DEL SUR", "MAGUINDANAO", "SULU", "TAWI-TAWI",
+  
+  // CAR
+  "ABRA", "APAYAO", "BENGUET", "IFUGAO", "KALINGA", "MOUNTAIN PROVINCE",
+  
+  // NCR
+  "BINONDO", "ERMITA", "INTRAMUROS", "MALATE", "PACO", "PANDACAN", "PORT AREA", 
+  "QUIAPO", "SAMPALOC", "SAN MIGUEL", "SAN NICOLAS", "SANTA ANA", "SANTA CRUZ", 
+  "TONDO", "MANILA", "CITY OF MANDALUYONG", "CITY OF MARIKINA", "CITY OF PASIG", 
+  "QUEZON CITY", "SAN JUAN", "CITY OF VALENZUELA", "KALOOKAN CITY", "MALABON", 
+  "NAVOTAS", "CITY OF LAS PIÑAS", "CITY OF MAKATI", "CITY OF MUNTINLUPA", 
+  "CITY OF PARAÑAQUE", "PASAY CITY", "PATEROS", "TAGUIG"
+];
+
+export const regions = [
+  { key: "REGION_I", name: "Region I - Ilocos Region" },
+  { key: "REGION_II", name: "Region II - Cagayan Valley" },
+  { key: "REGION_III", name: "Region III - Central Luzon" },
+  { key: "REGION_IV_A", name: "Region IV-A CALABARZON" },
+  { key: "REGION_IV_B", name: "Region IV-B MIMAROPA" },
+  { key: "REGION_V", name: "Region V - Bicol Region" },
+  { key: "REGION_VI", name: "Region VI - Western Visayas" },
+  { key: "REGION_VII", name: "Region VII - Central Visayas" },
+  { key: "REGION_VIII", name: "Region VIII - Eastern Visayas" },
+  { key: "REGION_IX", name: "Region IX - Zamboanga Peninsula" },
+  { key: "REGION_X", name: "Region X - Northern Mindanao" },
+  { key: "REGION_XI", name: "Region XI - Davao Region" },
+  { key: "REGION_XII", name: "Region XII - SOCCSKSARGEN" },
+  { key: "REGION_XIII", name: "Region XIII - Caraga" },
+  { key: "ARMM", name: "Autonomous Region in Muslim Mindanao (ARMM)" },
+  { key: "CAR", name: "Cordillera Administrative Region (CAR)" },
+  { key: "NCR", name: "National Capital Region" }
+];
+
+export const provincesByRegion = {
+  "REGION_I": ["ILOCOS NORTE", "ILOCOS SUR", "LA UNION", "PANGASINAN"],
+  "REGION_II": ["BATANES", "CAGAYAN", "ISABELA", "NUEVA VIZCAYA", "QUIRINO"],
+  "REGION_III": ["AURORA", "BATAAN", "BULACAN", "NUEVA ECIJA", "PAMPANGA", "TARLAC", "ZAMBALES"],
+  "REGION_IV_A": ["BATANGAS", "CAVITE", "LAGUNA", "QUEZON", "RIZAL"],
+  "REGION_IV_B": ["MARINDUQUE", "OCCIDENTAL MINDORO", "ORIENTAL MINDORO", "PALAWAN", "ROMBLON"],
+  "REGION_V": ["ALBAY", "CAMARINES NORTE", "CAMARINES SUR", "CATANDUANES", "MASBATE", "SORSOGON"],
+  "REGION_VI": ["AKLAN", "ANTIQUE", "CAPIZ", "GUIMARAS", "ILOILO", "NEGROS OCCIDENTAL"],
+  "REGION_VII": ["BOHOL", "CEBU", "NEGROS ORIENTAL", "SIQUIJOR"],
+  "REGION_VIII": ["BILIRAN", "EASTERN SAMAR", "LEYTE", "NORTHERN SAMAR", "SAMAR (WESTERN SAMAR)", "SOUTHERN LEYTE"],
+  "REGION_IX": ["ZAMBOANGA DEL NORTE", "ZAMBOANGA DEL SUR", "ZAMBOANGA SIBUGAY", "ISABELA CITY, (BASILAN)"],
+  "REGION_X": ["BUKIDNON", "CAMIGUIN", "LANAO DEL NORTE", "MISAMIS OCCIDENTAL", "MISAMIS ORIENTAL"],
+  "REGION_XI": ["COMPOSTELA VALLEY", "DAVAO DEL NORTE", "DAVAO DEL SUR", "DAVAO ORIENTAL"],
+  "REGION_XII": ["COTABATO CITY", "NORTH COTABATO", "SARANGANI", "SOUTH COTABATO", "SULTAN KUDARAT"],
+  "REGION_XIII": ["AGUSAN DEL NORTE", "AGUSAN DEL SUR", "SURIGAO DEL NORTE", "SURIGAO DEL SUR"],
+  "ARMM": ["BASILAN", "LANAO DEL SUR", "MAGUINDANAO", "SULU", "TAWI-TAWI"],
+  "CAR": ["ABRA", "APAYAO", "BENGUET", "IFUGAO", "KALINGA", "MOUNTAIN PROVINCE"],
+  "NCR": [
+    "BINONDO", "ERMITA", "INTRAMUROS", "MALATE", "PACO", "PANDACAN", "PORT AREA", 
+    "QUIAPO", "SAMPALOC", "SAN MIGUEL", "SAN NICOLAS", "SANTA ANA", "SANTA CRUZ", 
+    "TONDO", "MANILA", "CITY OF MANDALUYONG", "CITY OF MARIKINA", "CITY OF PASIG", 
+    "QUEZON CITY", "SAN JUAN", "CITY OF VALENZUELA", "KALOOKAN CITY", "MALABON", 
+    "NAVOTAS", "CITY OF LAS PIÑAS", "CITY OF MAKATI", "CITY OF MUNTINLUPA", 
+    "CITY OF PARAÑAQUE", "PASAY CITY", "PATEROS", "TAGUIG"
+  ]
+};

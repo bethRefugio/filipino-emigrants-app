@@ -1,0 +1,900 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ILOCOS NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.48, 18.55], [120.93, 18.55], [120.93, 17.95], [120.48, 17.95], [120.48, 18.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ILOCOS SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.35, 17.95], [120.80, 17.95], [120.80, 17.15], [120.35, 17.15], [120.35, 17.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "LA UNION" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.28, 17.15], [120.65, 17.15], [120.65, 16.45], [120.28, 16.45], [120.28, 17.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PANGASINAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[119.85, 16.45], [120.65, 16.45], [120.65, 15.55], [119.85, 15.55], [119.85, 16.45]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BATANES" },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[[121.95, 20.75], [122.15, 20.75], [122.15, 20.35], [121.95, 20.35], [121.95, 20.75]]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAGAYAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.15, 18.85], [122.15, 18.85], [122.15, 17.55], [121.15, 17.55], [121.15, 18.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ISABELA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.20, 17.75], [122.35, 17.75], [122.35, 16.25], [121.20, 16.25], [121.20, 17.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NUEVA VIZCAYA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.85, 16.85], [121.55, 16.85], [121.55, 16.05], [120.85, 16.05], [120.85, 16.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "QUIRINO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.35, 16.55], [121.85, 16.55], [121.85, 16.05], [121.35, 16.05], [121.35, 16.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "AURORA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.45, 16.15], [122.15, 16.15], [122.15, 15.25], [121.45, 15.25], [121.45, 16.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BATAAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.35, 14.95], [120.75, 14.95], [120.75, 14.35], [120.35, 14.35], [120.35, 14.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BULACAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.75, 15.05], [121.25, 15.05], [121.25, 14.55], [120.75, 14.55], [120.75, 15.05]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NUEVA ECIJA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.65, 15.95], [121.45, 15.95], [121.45, 15.15], [120.65, 15.15], [120.65, 15.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PAMPANGA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.45, 15.25], [120.95, 15.25], [120.95, 14.75], [120.45, 14.75], [120.45, 15.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "TARLAC" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.35, 15.85], [120.95, 15.85], [120.95, 15.15], [120.35, 15.15], [120.35, 15.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ZAMBALES" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[119.85, 15.85], [120.45, 15.85], [120.45, 14.75], [119.85, 14.75], [119.85, 15.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BATANGAS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.75, 14.25], [121.45, 14.25], [121.45, 13.65], [120.75, 13.65], [120.75, 14.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAVITE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.65, 14.55], [121.15, 14.55], [121.15, 14.05], [120.65, 14.05], [120.65, 14.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "LAGUNA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.05, 14.55], [121.65, 14.55], [121.65, 13.95], [121.05, 13.95], [121.05, 14.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "QUEZON" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.25, 14.85], [122.45, 14.85], [122.45, 13.55], [121.25, 13.55], [121.25, 14.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "RIZAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.05, 14.95], [121.45, 14.95], [121.45, 14.35], [121.05, 14.35], [121.05, 14.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MARINDUQUE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.75, 13.65], [122.05, 13.65], [122.05, 13.25], [121.75, 13.25], [121.75, 13.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "OCCIDENTAL MINDORO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.55, 13.65], [121.15, 13.65], [121.15, 12.35], [120.55, 12.35], [120.55, 13.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ORIENTAL MINDORO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.05, 13.65], [121.75, 13.65], [121.75, 12.35], [121.05, 12.35], [121.05, 13.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PALAWAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[117.85, 11.85], [119.55, 11.85], [119.55, 8.35], [117.85, 8.35], [117.85, 11.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ROMBLON" },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[[122.05, 12.85], [122.45, 12.85], [122.45, 12.15], [122.05, 12.15], [122.05, 12.85]]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ALBAY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.55, 13.55], [124.15, 13.55], [124.15, 13.05], [123.55, 13.05], [123.55, 13.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAMARINES NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.65, 14.45], [123.15, 14.45], [123.15, 13.85], [122.65, 13.85], [122.65, 14.45]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAMARINES SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.95, 14.15], [123.75, 14.15], [123.75, 13.15], [122.95, 13.15], [122.95, 14.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CATANDUANES" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.05, 14.15], [124.45, 14.15], [124.45, 13.45], [124.05, 13.45], [124.05, 14.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MASBATE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.25, 12.75], [123.95, 12.75], [123.95, 11.75], [123.25, 11.75], [123.25, 12.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SORSOGON" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.75, 13.15], [124.35, 13.15], [124.35, 12.45], [123.75, 12.45], [123.75, 13.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "AKLAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.85, 12.05], [122.35, 12.05], [122.35, 11.45], [121.85, 11.45], [121.85, 12.05]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ANTIQUE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.75, 12.15], [122.25, 12.15], [122.25, 10.55], [121.75, 10.55], [121.75, 12.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAPIZ" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.25, 11.85], [122.85, 11.85], [122.85, 11.15], [122.25, 11.15], [122.25, 11.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "GUIMARAS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.55, 10.75], [122.75, 10.75], [122.75, 10.45], [122.55, 10.45], [122.55, 10.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ILOILO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.35, 11.55], [123.05, 11.55], [123.05, 10.35], [122.35, 10.35], [122.35, 11.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NEGROS OCCIDENTAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.75, 11.25], [123.35, 11.25], [123.35, 9.75], [122.75, 9.75], [122.75, 11.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BOHOL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.75, 10.35], [124.65, 10.35], [124.65, 9.55], [123.75, 9.55], [123.75, 10.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CEBU" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.25, 11.35], [124.15, 11.35], [124.15, 9.45], [123.25, 9.45], [123.25, 11.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NEGROS ORIENTAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.95, 10.35], [123.35, 10.35], [123.35, 9.05], [122.95, 9.05], [122.95, 10.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SIQUIJOR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.45, 9.35], [123.75, 9.35], [123.75, 9.05], [123.45, 9.05], [123.45, 9.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BILIRAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.45, 11.75], [124.75, 11.75], [124.75, 11.45], [124.45, 11.45], [124.45, 11.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "EASTERN SAMAR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.15, 12.15], [125.85, 12.15], [125.85, 10.85], [125.15, 10.85], [125.15, 12.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "LEYTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.45, 11.75], [125.35, 11.75], [125.35, 10.35], [124.45, 10.35], [124.45, 11.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NORTHERN SAMAR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.55, 12.85], [125.35, 12.85], [125.35, 12.05], [124.55, 12.05], [124.55, 12.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SAMAR (WESTERN SAMAR)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.65, 12.45], [125.15, 12.45], [125.15, 11.15], [124.65, 11.15], [124.65, 12.45]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SOUTHERN LEYTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.85, 10.75], [125.35, 10.75], [125.35, 9.95], [124.85, 9.95], [124.85, 10.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ZAMBOANGA DEL NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.35, 8.95], [123.45, 8.95], [123.45, 7.95], [122.35, 7.95], [122.35, 8.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ZAMBOANGA DEL SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.35, 8.25], [123.35, 8.25], [123.35, 6.85], [122.35, 6.85], [122.35, 8.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ZAMBOANGA SIBUGAY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[122.05, 7.85], [122.85, 7.85], [122.85, 7.15], [122.05, 7.15], [122.05, 7.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ISABELA CITY, (BASILAN)" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.85, 6.85], [122.35, 6.85], [122.35, 6.35], [121.85, 6.35], [121.85, 6.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BUKIDNON" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.45, 8.65], [125.35, 8.65], [125.35, 7.45], [124.45, 7.45], [124.45, 8.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CAMIGUIN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.65, 9.35], [124.95, 9.35], [124.95, 9.05], [124.65, 9.05], [124.65, 9.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "LANAO DEL NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.55, 8.45], [124.35, 8.45], [124.35, 7.65], [123.55, 7.65], [123.55, 8.45]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MISAMIS OCCIDENTAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.35, 8.85], [123.95, 8.85], [123.95, 8.15], [123.35, 8.15], [123.35, 8.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MISAMIS ORIENTAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.35, 9.15], [125.15, 9.15], [125.15, 8.25], [124.35, 8.25], [124.35, 9.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "COMPOSTELA VALLEY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.75, 7.85], [126.35, 7.85], [126.35, 7.15], [125.75, 7.15], [125.75, 7.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "DAVAO DEL NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.35, 7.95], [125.95, 7.95], [125.95, 7.05], [125.35, 7.05], [125.35, 7.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "DAVAO DEL SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.05, 7.25], [125.65, 7.25], [125.65, 6.15], [125.05, 6.15], [125.05, 7.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "DAVAO ORIENTAL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[126.05, 7.95], [126.75, 7.95], [126.75, 6.35], [126.05, 6.35], [126.05, 7.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "COTABATO CITY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.15, 7.35], [124.35, 7.35], [124.35, 7.15], [124.15, 7.15], [124.15, 7.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NORTH COTABATO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.35, 7.95], [125.35, 7.95], [125.35, 6.85], [124.35, 6.85], [124.35, 7.95]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SARANGANI" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.85, 6.35], [125.65, 6.35], [125.65, 5.55], [124.85, 5.55], [124.85, 6.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SOUTH COTABATO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.55, 6.85], [125.35, 6.85], [125.35, 5.95], [124.55, 5.95], [124.55, 6.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SULTAN KUDARAT" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[124.15, 7.15], [124.95, 7.15], [124.95, 6.05], [124.15, 6.05], [124.15, 7.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "AGUSAN DEL NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.35, 9.25], [125.95, 9.25], [125.95, 8.55], [125.35, 8.55], [125.35, 9.25]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "AGUSAN DEL SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.45, 8.85], [126.35, 8.85], [126.35, 7.85], [125.45, 7.85], [125.45, 8.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SURIGAO DEL NORTE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.35, 10.15], [126.25, 10.15], [126.25, 9.25], [125.35, 9.25], [125.35, 10.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SURIGAO DEL SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[125.85, 9.85], [126.65, 9.85], [126.65, 8.35], [125.85, 8.35], [125.85, 9.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BASILAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.85, 6.85], [122.35, 6.85], [122.35, 6.25], [121.85, 6.25], [121.85, 6.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "LANAO DEL SUR" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.85, 8.15], [124.65, 8.15], [124.65, 7.25], [123.85, 7.25], [123.85, 8.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MAGUINDANAO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[123.85, 7.45], [124.75, 7.45], [124.75, 6.55], [123.85, 6.55], [123.85, 7.45]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SULU" },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[[120.75, 6.35], [121.35, 6.35], [121.35, 5.65], [120.75, 5.65], [120.75, 6.35]]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "TAWI-TAWI" },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[[119.75, 5.35], [120.35, 5.35], [120.35, 4.95], [119.75, 4.95], [119.75, 5.35]]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ABRA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.65, 17.85], [121.15, 17.85], [121.15, 17.35], [120.65, 17.35], [120.65, 17.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "APAYAO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.95, 18.55], [121.55, 18.55], [121.55, 17.85], [120.95, 17.85], [120.95, 18.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BENGUET" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.45, 16.85], [120.95, 16.85], [120.95, 16.15], [120.45, 16.15], [120.45, 16.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "IFUGAO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.95, 17.15], [121.45, 17.15], [121.45, 16.55], [120.95, 16.55], [120.95, 17.15]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "KALINGA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.95, 17.85], [121.55, 17.85], [121.55, 17.15], [120.95, 17.15], [120.95, 17.85]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MOUNTAIN PROVINCE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.75, 17.35], [121.25, 17.35], [121.25, 16.85], [120.75, 16.85], [120.75, 17.35]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MANILA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.95, 14.65], [121.05, 14.65], [121.05, 14.55], [120.95, 14.55], [120.95, 14.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "QUEZON CITY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.00, 14.75], [121.15, 14.75], [121.15, 14.60], [121.00, 14.60], [121.00, 14.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "KALOOKAN CITY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.95, 14.75], [121.05, 14.75], [121.05, 14.65], [120.95, 14.65], [120.95, 14.75]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF PASIG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.05, 14.65], [121.15, 14.65], [121.15, 14.55], [121.05, 14.55], [121.05, 14.65]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF MAKATI" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.00, 14.58], [121.08, 14.58], [121.08, 14.52], [121.00, 14.52], [121.00, 14.58]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF MANDALUYONG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.02, 14.60], [121.08, 14.60], [121.08, 14.56], [121.02, 14.56], [121.02, 14.60]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF MARIKINA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.08, 14.68], [121.16, 14.68], [121.16, 14.60], [121.08, 14.60], [121.08, 14.68]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PASAY CITY" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.98, 14.56], [121.02, 14.56], [121.02, 14.52], [120.98, 14.52], [120.98, 14.56]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF PARAÃ'AQUE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.98, 14.52], [121.04, 14.52], [121.04, 14.46], [120.98, 14.46], [120.98, 14.52]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF LAS PIÃ'AS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.96, 14.48], [121.02, 14.48], [121.02, 14.42], [120.96, 14.42], [120.96, 14.48]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF MUNTINLUPA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.00, 14.44], [121.08, 14.44], [121.08, 14.36], [121.00, 14.36], [121.00, 14.44]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "CITY OF VALENZUELA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.96, 14.76], [121.04, 14.76], [121.04, 14.70], [120.96, 14.70], [120.96, 14.76]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MALABON" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.94, 14.70], [121.00, 14.70], [121.00, 14.66], [120.94, 14.66], [120.94, 14.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "NAVOTAS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.92, 14.70], [120.98, 14.70], [120.98, 14.66], [120.92, 14.66], [120.92, 14.70]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SAN JUAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.02, 14.62], [121.06, 14.62], [121.06, 14.58], [121.02, 14.58], [121.02, 14.62]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "TAGUIG" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.04, 14.56], [121.12, 14.56], [121.12, 14.48], [121.04, 14.48], [121.04, 14.56]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PATEROS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.06, 14.55], [121.09, 14.55], [121.09, 14.53], [121.06, 14.53], [121.06, 14.55]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "BINONDO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.970, 14.605], [120.985, 14.605], [120.985, 14.595], [120.970, 14.595], [120.970, 14.605]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "ERMITA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.975, 14.590], [120.990, 14.590], [120.990, 14.580], [120.975, 14.580], [120.975, 14.590]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "INTRAMUROS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.970, 14.595], [120.980, 14.595], [120.980, 14.585], [120.970, 14.585], [120.970, 14.595]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "MALATE" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.980, 14.580], [120.995, 14.580], [120.995, 14.570], [120.980, 14.570], [120.980, 14.580]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PACO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.990, 14.585], [121.005, 14.585], [121.005, 14.575], [120.990, 14.575], [120.990, 14.585]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PANDACAN" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.000, 14.595], [121.015, 14.595], [121.015, 14.585], [121.000, 14.585], [121.000, 14.595]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "PORT AREA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.955, 14.595], [120.970, 14.595], [120.970, 14.585], [120.955, 14.585], [120.955, 14.595]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "QUIAPO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.980, 14.605], [120.995, 14.605], [120.995, 14.595], [120.980, 14.595], [120.980, 14.605]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SAMPALOC" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.990, 14.620], [121.010, 14.620], [121.010, 14.605], [120.990, 14.605], [120.990, 14.620]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SAN MIGUEL" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.985, 14.610], [121.000, 14.610], [121.000, 14.600], [120.985, 14.600], [120.985, 14.610]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SAN NICOLAS" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.975, 14.615], [120.990, 14.615], [120.990, 14.605], [120.975, 14.605], [120.975, 14.615]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SANTA ANA" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[121.005, 14.605], [121.020, 14.605], [121.020, 14.590], [121.005, 14.590], [121.005, 14.605]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "SANTA CRUZ" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.985, 14.620], [121.005, 14.620], [121.005, 14.610], [120.985, 14.610], [120.985, 14.620]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "NAME_1": "TONDO" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[120.960, 14.625], [120.985, 14.625], [120.985, 14.605], [120.960, 14.605], [120.960, 14.625]]]
+      }
+    }
+  ]}
