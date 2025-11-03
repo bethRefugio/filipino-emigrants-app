@@ -5,7 +5,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './pages/Dashboard';
 import CivilStatusPage from './pages/CivilStatusPage';
-import GenderPage from './pages/GenderPage';
+import SexPage from './pages/SexPage';
 import AgePage from './pages/AgePage';
 import EducationPage from './pages/EducationPage';
 import OccupationPage from './pages/OccupationPage';
@@ -54,10 +54,10 @@ function App() {
           }
         />
         <Route
-          path="/gender"
+          path="/sex"
           element={
             <MainLayout>
-              <GenderPage />
+              <SexPage />
             </MainLayout>
           }
         />

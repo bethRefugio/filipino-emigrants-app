@@ -7,21 +7,40 @@ import { provincesByRegion } from './originNames';
 export default function OriginVisualizations({ data, selectedProvinces }) {
   const [tab, setTab] = useState('bar');
 
-  // Prepare data for province-based charts
-  const provinceData = selectedProvinces.slice(0, 10).map(province => {
-    const total = data.reduce((sum, record) => sum + (record[province] || 0), 0);
+  // Helper: find province value in record with case-insensitive key match
+  const findProvinceValue = (record, provinceName) => {
+    if (!record || typeof record !== 'object') return 0;
+    const normalizedTarget = String(provinceName || '').toUpperCase().trim();
+    // fast path: exact match
+    if (record.hasOwnProperty(provinceName)) return Number(record[provinceName]) || 0;
+    // check uppercase keys cache
+    for (const k of Object.keys(record)) {
+      if (String(k).toUpperCase().trim() === normalizedTarget) {
+        return Number(record[k]) || 0;
+      }
+    }
+    return 0;
+  };
+
+  // Calculate totals for all selected provinces first
+  const allProvinceTotals = selectedProvinces.map(province => {
+    const total = data.reduce((sum, record) => sum + findProvinceValue(record, province), 0);
     return {
       name: province.length > 15 ? province.substring(0, 15) + '...' : province,
       fullName: province,
       value: total
     };
-  }).sort((a, b) => b.value - a.value);
+  });
 
-  // Time series data for top 5 provinces
+  // Sort by value and then take the top 10 for the bar chart
+  const provinceData = [...allProvinceTotals].sort((a, b) => b.value - a.value).slice(0, 10);
+
+  // Time series data for top 5 provinces (ensure values pulled using case-insensitive lookup)
+  const top5Provinces = [...allProvinceTotals].sort((a, b) => b.value - a.value).slice(0, 5).map(p => p.fullName);
   const timeSeriesData = data.map(record => {
     const yearData = { year: record.year };
-    selectedProvinces.slice(0, 5).forEach(province => {
-      yearData[province] = record[province] || 0;
+    top5Provinces.forEach(province => {
+      yearData[province] = findProvinceValue(record, province);
     });
     return yearData;
   }).sort((a, b) => a.year - b.year);
@@ -51,7 +70,7 @@ export default function OriginVisualizations({ data, selectedProvinces }) {
     <div className="p-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-xl font-bold text-gray-800">Data Visualizations</h3>
+          <h3 className="text-xl font-bold text-gray-800">Place of Origin Data Visualizations</h3>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -88,7 +107,7 @@ export default function OriginVisualizations({ data, selectedProvinces }) {
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend wrapperStyle={{ fontSize: '11px' }} />
-                {selectedProvinces.slice(0, 5).map((province, index) => (
+                {top5Provinces.map((province, index) => (
                   <Line
                     key={province}
                     type="monotone"

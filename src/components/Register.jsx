@@ -229,7 +229,7 @@ export default function Register() {
             <p className="text-center text-gray-600 mt-2">
               Already have an account?{' '}
               <a href="/login" className="font-bold text-cyan-600 hover:text-cyan-700 transition-colors underline">
-                Log in here
+                Log in
               </a>
             </p>
           </form>

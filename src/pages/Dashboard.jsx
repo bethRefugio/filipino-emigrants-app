@@ -3,7 +3,7 @@ import TopNavbar from '../components/DashboardTopNavbar';
 
 // Visualization components
 import AgeVisualizations from '../components/age/Visualizations';
-import GenderVisualizations from '../components/gender/Visualizations';
+import GenderVisualizations from '../components/sex/Visualizations';
 import CivilStatusVisualizations from '../components/civil_status/Visualizations';
 import EducationVisualizations from '../components/education/Visualizations';
 import OccupationVisualizations from '../components/occupation/Visualizations';
@@ -12,7 +12,7 @@ import OriginVisualizations from '../components/origin/Visualizations';
 
 // Data fetchers for each collection
 import { getEmigrants as getAgeEmigrants } from '../services/age';
-import { getEmigrants as getGenderEmigrants } from '../services/gender';
+import { getEmigrants as getGenderEmigrants } from '../services/sex';
 import { getEmigrants as getCivilStatusEmigrants } from '../services/civil_status';
 import { getEmigrants as getEducationEmigrants } from '../services/education';
 import { getEmigrants as getOccupationEmigrants } from '../services/occupation';
@@ -41,7 +41,7 @@ export default function Dashboard() {
       setLoading(true);
       const [
         age,
-        gender,
+        sex,
         civilStatus,
         education,
         occupation,
@@ -57,7 +57,7 @@ export default function Dashboard() {
         getOriginEmigrants()
       ]);
       setAgeData(age);
-      setGenderData(gender);
+      setGenderData(sex);
       setCivilStatusData(civilStatus);
       setEducationData(education);
       setOccupationData(occupation);

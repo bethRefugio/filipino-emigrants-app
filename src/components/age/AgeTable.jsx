@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Edit2, X, Download } from 'lucide-react';
+import useUserRole from '../isPrivileged';
 
 export default function AgeTable({
   sortedData,
@@ -25,6 +26,8 @@ export default function AgeTable({
       (currentPage - 1) * recordsPerPage,
       currentPage * recordsPerPage
     );
+
+    const { user, isPrivileged } = useUserRole();
   
     // Define all possible columns
     const allColumns = [
@@ -43,6 +46,7 @@ export default function AgeTable({
       { key: '70-above', label: '70-above' },
       { key: 'notReported', label: 'Not Reported' }
     ];
+    
   
     // Only show checked columns
     const visibleColumns = allColumns.filter(col => selectedCategories.includes(col.key));
@@ -179,9 +183,11 @@ export default function AgeTable({
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Total
                   </th>
+                  {user && isPrivileged(user.role) && (
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Actions
                   </th>
+                  )}
                 </tr>
               </thead>
   
@@ -216,6 +222,7 @@ export default function AgeTable({
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
                         {total.toLocaleString()}
                       </td>
+                      {user && isPrivileged(user.role) && (
                       <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                         <button
                           onClick={() => handleEdit(e)}
@@ -232,6 +239,7 @@ export default function AgeTable({
                           <X size={16} />
                         </button>
                       </td>
+                      )}
                     </tr>
                   );
                 })}

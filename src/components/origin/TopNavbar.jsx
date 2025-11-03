@@ -1,6 +1,7 @@
 import { Search, Plus, Upload, Filter } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 import { regions, provincesByRegion } from './originNames';
+import useUserRole from '../isPrivileged';
 
 export default function TopNavbar({
   searchTerm,
@@ -16,6 +17,8 @@ export default function TopNavbar({
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('all');
   const dropdownRef = useRef(null);
+
+  const { user, isPrivileged } = useUserRole();
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -159,6 +162,8 @@ export default function TopNavbar({
           )}
         </div>
         
+        {user && isPrivileged(user.role) && (
+        <>
         <button
           onClick={() => setShowAddModal(true)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
@@ -174,6 +179,8 @@ export default function TopNavbar({
           <Upload size={18} />
           Import CSV
         </button>
+        </>
+        )}
       </div>
     </div>
   );

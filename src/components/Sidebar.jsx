@@ -7,7 +7,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     useEffect(() => {
        const stored = localStorage.getItem('user');
-        if (stored) setUser(JSON.parse(stored));
+       if (stored) setUser(JSON.parse(stored));
     }, []);
 
     const handleLogout = () => {
@@ -20,6 +20,24 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     // Helper to check if route is active
     const isActive = (route) => location.pathname === route;
+
+    // Map role -> button classes (background + text)
+    const roleClass = (role) => {
+      if (!role) return 'bg-blue-100 text-blue-800';
+      const r = String(role).toLowerCase();
+      if (r === 'admin' || r.includes('admin')) return 'bg-green-100 text-green-800';
+      if (r.includes('government') || r.includes('official')) return 'bg-yellow-100 text-yellow-800';
+      return 'bg-blue-100 text-blue-800';
+    };
+
+    // Optional: display-friendly role label
+    const roleLabel = (role) => {
+      if (!role) return 'User';
+      const r = String(role).toLowerCase();
+      if (r === 'admin' || r.includes('admin')) return 'Admin';
+      if (r.includes('government') || r.includes('official')) return 'Government Official';
+      return role;
+    };
 
     return (
         <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white shadow-lg transition-all duration-300 flex flex-col`}>
@@ -34,15 +52,29 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <span className="text-xs text-gray-500 block">
                                 {user ? `@${user.username}` : ''}
                             </span>
+
+                            {/* Role badge button placed below the username */}
+                            {user && user.role && (
+                              <div className="mt-2">
+                                <button
+                                  type="button"
+                                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${roleClass(user.role)} border border-transparent`}
+                                  title={`Role: ${user.role}`}
+                                  aria-label={`Role: ${user.role}`}
+                                >
+                                  {roleLabel(user.role)}
+                                </button>
+                              </div>
+                            )}
                         </div>
                     </div>
                 )}
-                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-100 rounded">
+                <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-100 rounded" aria-label="toggle sidebar">
                     <Menu size={20} />
                 </button>
             </div>
+
             <nav className="flex-1 p-4">
-                {/* ...existing nav items... */}
                 <div
                     className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/dashboard') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
                     onClick={() => navigate('/dashboard')}
@@ -66,10 +98,10 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
                 <div
                     className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/gender') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
-                    onClick={() => navigate('/gender')}
+                    onClick={() => navigate('/sex')}
                 >
                     <VenusAndMars size={20} />
-                    {sidebarOpen && <span>Gender</span>}
+                    {sidebarOpen && <span>Sex</span>}
                 </div>
                 <div
                     className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/education') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
@@ -93,13 +125,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {sidebarOpen && <span>Major Country Destination</span>}
                 </div>
                 <div
-                    className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/origin-regions') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
+                    className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/origin') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
                     onClick={() => navigate('/origin')}
                 >
                     <MapPinHouse size={20} />
                     {sidebarOpen && <span>Place of Origin</span>}
                 </div>
             </nav>
+
             {sidebarOpen && (
                 <div className="p-4 border-t m-4">
                     <button

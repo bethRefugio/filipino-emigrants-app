@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, X, Download } from 'lucide-react';
+import useUserRole from '../isPrivileged';
 
 export default function DataTable({
   sortedData,
@@ -24,6 +25,8 @@ export default function DataTable({
     (currentPage - 1) * recordsPerPage,
     currentPage * recordsPerPage
   );
+
+  const { user, isPrivileged } = useUserRole();
 
   // Define all possible columns
   const allColumns = [
@@ -175,9 +178,11 @@ export default function DataTable({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Total
                 </th>
+                {user && isPrivileged(user.role) && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                   Actions
                 </th>
+                )}
               </tr>
             </thead>
 
@@ -212,6 +217,7 @@ export default function DataTable({
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-800">
                       {total.toLocaleString()}
                     </td>
+                    {user && isPrivileged(user.role) && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                       <button
                         onClick={() => handleEdit(e)}
@@ -228,6 +234,7 @@ export default function DataTable({
                         <X size={16} />
                       </button>
                     </td>
+                    )}
                   </tr>
                 );
               })}

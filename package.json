@@ -21,6 +21,7 @@
     "firebase-admin": "^13.5.0",
     "lucide-react": "^0.544.0",
     "papaparse": "^5.5.3",
+    "phosphor-react": "^1.4.1",
     "plotly.js-dist-min": "^3.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
