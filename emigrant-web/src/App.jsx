@@ -11,7 +11,6 @@ import EducationPage from './pages/EducationPage';
 import OccupationPage from './pages/OccupationPage';
 import MajorDestinationPage from './pages/MajorDestinationPage';
 import OriginPage from './pages/OriginPage';
-
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -61,6 +60,7 @@ function App() {
             </MainLayout>
           }
         />
+        
         <Route
           path="/education"
           element={

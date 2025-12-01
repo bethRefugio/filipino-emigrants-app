@@ -9,6 +9,7 @@ import EducationVisualizations from '../components/education/Visualizations';
 import OccupationVisualizations from '../components/occupation/Visualizations';
 import FlowMap from '../components/major-destination/FlowMap';
 import OriginVisualizations from '../components/origin/Visualizations';
+import PopulationPyramid from './PopulationPyramid';
 
 // Data fetchers for each collection
 import { getEmigrants as getAgeEmigrants } from '../services/age';
@@ -106,6 +107,7 @@ export default function Dashboard() {
       <div className="space-y-4 px-6 pb-2 mt-6">
         <AgeVisualizations data={ageData}/>
         <GenderVisualizations data={genderData} />
+        <PopulationPyramid/>
         <CivilStatusVisualizations data={civilStatusData} />
         <EducationVisualizations data={educationData} />
         <OccupationVisualizations data={occupationData} />

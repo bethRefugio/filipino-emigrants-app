@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  Label,
 } from "recharts";
 
 const SEX_COLORS = {
@@ -96,12 +97,38 @@ export default function Visualizations({ data, selectedCategories }) {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
           <h4 className="font-semibold mb-2">Line Chart (Trends by Category)</h4>
           <ResponsiveContainer width="100%" height={350}>
-            <LineChart data={chartData}>
+            <LineChart 
+              data={chartData} 
+              margin={{ top: 20, right: 30, left: 10, bottom: 10 }}
+            >
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis />
+              <XAxis 
+                dataKey="year" 
+                tick={{ fontSize: 11 }}
+                height={50}
+              >
+                <Label 
+                  value="Year" 
+                  offset={-5} 
+                  position="insideBottom" 
+                  style={{ fontSize: '12px', fontWeight: 'bold', fill: '#374151' }}
+                />
+              </XAxis>
+              <YAxis tick={{ fontSize: 11 }}>
+                <Label 
+                  value="Number of Emigrants" 
+                  angle={-90} 
+                  position="insideLeft" 
+                  style={{ textAnchor: 'middle', fontSize: '12px', fontWeight: 'bold', fill: '#374151' }}
+                  offset={5}
+                />
+              </YAxis>
               <Tooltip />
-              <Legend />
+              <Legend 
+                verticalAlign="bottom" 
+                align="center" 
+                wrapperStyle={{ paddingTop: '20px' }}
+              />
               {visibleCategories.map((cat) => (
                 <Line
                   key={cat}

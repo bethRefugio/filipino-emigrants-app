@@ -253,63 +253,92 @@ export default function AgePage() {
   };
 
   const parseCSVPreview = (file) => {
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        // Remove thousands separators and convert to numbers
-        const previewData = results.data.slice(0, 5).map((row, idx) => ({
-          year: row.year,
-          ...Object.fromEntries(ageCategories.map(cat =>
-            [cat, Number((row[cat] || '0').replace(/,/g, ''))]
-          ))
-        }));
-        setCsvPreview(previewData);
-      }
-    });
-  };
-
-  const handleImportCSV = async () => {
-    if (!csvFile) {
-      alert('Please select a CSV file first');
-      return;
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: (results) => {
+      console.log('CSV Headers:', Object.keys(results.data[0])); // Debug: Check headers
+      console.log('Sample Row:', results.data[0]); // Debug: Check first row
+      
+      // Remove thousands separators and convert to numbers
+      const previewData = results.data.slice(0, 5).map((row) => {
+        const parsedRow = { year: Number(row.year || 0) };
+        
+        ageCategories.forEach(cat => {
+          const value = row[cat];
+          parsedRow[cat] = value ? Number(String(value).replace(/,/g, '')) : 0;
+        });
+        
+        return parsedRow;
+      });
+      
+      console.log('Parsed Preview:', previewData); // Debug: Check parsed data
+      setCsvPreview(previewData);
+    },
+    error: (error) => {
+      console.error('Parse error:', error);
+      alert('Error parsing CSV file');
     }
-    setImporting(true);
-    Papa.parse(csvFile, {
-      header: true,
-      skipEmptyLines: true,
-      complete: async (results) => {
-        try {
-          const records = results.data.map(row => ({
-            year: Number(row.year),
-            ...Object.fromEntries(ageCategories.map(cat =>
-              [cat, Number((row[cat] || '0').replace(/,/g, ''))]
-            ))
-          }));
-          let successCount = 0;
-          for (const record of records) {
-            try {
-              await addEmigrant(record);
-              successCount++;
-            } catch (error) {
-              console.error('Error adding record:', error);
-            }
+  });
+};
+
+const handleImportCSV = async () => {
+  if (!csvFile) {
+    alert('Please select a CSV file first');
+    return;
+  }
+  setImporting(true);
+  Papa.parse(csvFile, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async (results) => {
+      try {
+        console.log('Import - First Row:', results.data[0]); // Debug
+        
+        const records = results.data
+          .filter(row => row.year) // Filter out empty rows
+          .map(row => {
+            const record = { year: Number(row.year || 0) };
+            
+            ageCategories.forEach(cat => {
+              const value = row[cat];
+              record[cat] = value ? Number(String(value).replace(/,/g, '')) : 0;
+            });
+            
+            return record;
+          });
+        
+        console.log('Records to import:', records); // Debug
+        
+        let successCount = 0;
+        for (const record of records) {
+          try {
+            await addEmigrant(record);
+            successCount++;
+          } catch (error) {
+            console.error('Error adding record:', error);
           }
-          alert(`Successfully imported ${successCount} of ${records.length} records!`);
-          setCsvFile(null);
-          setCsvPreview([]);
-          setShowImportModal(false);
-          const fileInput = document.getElementById('csv-import-input');
-          if (fileInput) fileInput.value = '';
-          fetchData();
-        } catch (error) {
-          console.error('Error parsing CSV:', error);
-          alert('Error parsing CSV file. Please check the format.');
         }
-        setImporting(false);
+        alert(`Successfully imported ${successCount} of ${records.length} records!`);
+        setCsvFile(null);
+        setCsvPreview([]);
+        setShowImportModal(false);
+        const fileInput = document.getElementById('csv-import-input');
+        if (fileInput) fileInput.value = '';
+        fetchData();
+      } catch (error) {
+        console.error('Error parsing CSV:', error);
+        alert('Error parsing CSV file. Please check the format.');
       }
-    });
-  };
+      setImporting(false);
+    },
+    error: (error) => {
+      console.error('Parse error:', error);
+      alert('Error parsing CSV file');
+      setImporting(false);
+    }
+  });
+};
 
   const downloadSampleCSV = () => {
     const sampleCSV = `year,14-below,15-19,20-24,25-29,30-34,35-39,40-44,45-49,50-54,55-59,60-64,65-69,70-above,notReported

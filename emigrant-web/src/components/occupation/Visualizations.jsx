@@ -1,3 +1,4 @@
+// ...existing code...
 import React from "react";
 import {
   BarChart,
@@ -10,6 +11,10 @@ import {
   LineChart,
   Line,
   CartesianGrid,
+  ScatterChart,
+  Scatter,
+  ZAxis,
+  Cell,
 } from "recharts";
 
 const OCCUPATION_COLORS = {
@@ -17,13 +22,13 @@ const OCCUPATION_COLORS = {
   managerial_executive_admin: "#34d399",
   clerical_workers: "#fbbf24",
   sales_workers: "#f87171",
-  service_workers: "#a78bfa",
+  service_workers: "#53467aff",
   agri_animal_forestry_fishermen: "#f472b6",
   production_transport_equipment_laborers: "#f59e42",
   armed_forces: "#6366f1",
   housewives: "#facc15",
   retirees: "#10b981",
-  students: "#818cf8",
+  students: "#232a6eff",
   minors_below_7: "#ed0f31ff",
   out_of_school_youth: "#d688b1ff",
   refugees: "#a3e635",
@@ -49,9 +54,12 @@ const OCCUPATION_LABELS = {
 };
 
 export default function Visualizations({ data, selectedCategories }) {
+  // Filter data from year 2000 onwards
+  const filteredData = data.filter((e) => e.year >= 2000);
+
   // Prepare data for charts: group by year, sum each category
   const years = [
-    ...new Set(data.map((e) => e.year).filter((y) => y !== undefined && y !== null)),
+    ...new Set(filteredData.map((e) => e.year).filter((y) => y !== undefined && y !== null)),
   ].sort((a, b) => a - b);
 
   // Only show selected categories
@@ -59,9 +67,21 @@ export default function Visualizations({ data, selectedCategories }) {
     ? selectedCategories
     : Object.keys(OCCUPATION_LABELS);
 
+  // Calculate total for each category across all filtered data
+  const categoryTotals = Object.keys(OCCUPATION_LABELS).map((cat) => ({
+    key: cat,
+    total: filteredData.reduce((sum, e) => sum + (e[cat] || 0), 0),
+  }));
+
+  // Get top 5 categories
+  const top5Categories = categoryTotals
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 5)
+    .map((c) => c.key);
+
   // Prepare data for 100% stacked bar chart by year
   const stackedBarData = years.map((year) => {
-    const yearData = data.filter((e) => e.year === year);
+    const yearData = filteredData.filter((e) => e.year === year);
     const entry = { year: String(year) };
     // Sum for each category
     let yearTotal = 0;
@@ -78,14 +98,31 @@ export default function Visualizations({ data, selectedCategories }) {
 
   // Prepare data for line chart (absolute values)
   const chartData = years.map((year) => {
-    const yearData = data.filter((e) => e.year === year);
+    const yearData = filteredData.filter((e) => e.year === year);
     const entry = { year: String(year) };
     Object.keys(OCCUPATION_LABELS).forEach((cat) => {
       entry[cat] = yearData.reduce((sum, e) => sum + (e[cat] || 0), 0);
     });
     return entry;
   });
-  
+
+  // Prepare data for bubble chart (only top 5 categories)
+  const bubbleData = [];
+  years.forEach((year) => {
+    const yearData = filteredData.filter((e) => e.year === year);
+    top5Categories.forEach((cat) => {
+      const value = yearData.reduce((sum, e) => sum + (e[cat] || 0), 0);
+      if (value > 0) {
+        bubbleData.push({
+          year,
+          category: OCCUPATION_LABELS[cat],
+          categoryKey: cat,
+          value,
+          size: value,
+        });
+      }
+    });
+  });
 
   return (
   <div className="mt-0.2 px-6 pb-10">
@@ -147,7 +184,7 @@ export default function Visualizations({ data, selectedCategories }) {
       </ResponsiveContainer>
     </div>
     {/* Line Chart */}
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-8">
       <h4 className="font-semibold mb-2">Line Chart (Trends by Category)</h4>
       <ResponsiveContainer width="100%" height={450}>
         <LineChart data={chartData}>
@@ -196,6 +233,130 @@ export default function Visualizations({ data, selectedCategories }) {
         </LineChart>
       </ResponsiveContainer>
     </div>
+
+    {/* Bubble Chart - Top 5 Occupations */}
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+      <h4 className="font-semibold mb-2">
+        Relationship Between Yearly Emigrant Counts and Top 5 Occupational Groups (2000-{years[years.length - 1]})
+      </h4>
+      <ResponsiveContainer width="100%" height={500}>
+        <ScatterChart
+          margin={{ top: 20, right: 30, left: 60, bottom: 80 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            type="number"
+            dataKey="year"
+            name="Year"
+            domain={[2000, 'dataMax']}
+            ticks={years}
+            interval={0}
+            angle={-45}
+            textAnchor="end"
+            height={80}
+            tick={{ fontSize: 11 }}
+          />
+          <YAxis
+            type="number"
+            dataKey="value"
+            name="Emigrants"
+            tickFormatter={(value) => value.toLocaleString()}
+          />
+          <ZAxis
+            type="number"
+            dataKey="size"
+            range={[200, 4000]}
+            name="Count"
+          />
+          <Tooltip
+            cursor={{ strokeDasharray: '3 3' }}
+            content={({ active, payload }) => {
+              if (active && payload && payload.length) {
+                const data = payload[0].payload;
+                return (
+                  <div
+                    style={{
+                      backgroundColor: 'white',
+                      border: '1px solid #ccc',
+                      borderRadius: '4px',
+                      padding: '10px',
+                      fontSize: '12px',
+                    }}
+                  >
+                    <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>
+                      Year: {data.year}
+                    </p>
+                    <p style={{ marginBottom: '3px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: OCCUPATION_COLORS[data.categoryKey],
+                        marginRight: '6px',
+                        borderRadius: '50%',
+                      }}></span>
+                      {data.category}
+                    </p>
+                    <p>Emigrants: {data.value.toLocaleString()}</p>
+                  </div>
+                );
+              }
+              return null;
+            }}
+          />
+          <Legend
+            wrapperStyle={{
+              fontSize: 11,
+              paddingTop: 10,
+              lineHeight: "1.3em",
+            }}
+            iconSize={10}
+            layout="horizontal"
+            verticalAlign="bottom"
+            align="center"
+            content={(props) => {
+              const { payload } = props;
+              // Create legend only for top 5 categories
+              const uniqueCategories = [...new Set(bubbleData.map(d => d.categoryKey))];
+              return (
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  flexWrap: 'wrap', 
+                  gap: '12px',
+                  padding: '10px'
+                }}>
+                  {uniqueCategories.map((cat) => (
+                    <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: OCCUPATION_COLORS[cat],
+                        borderRadius: '50%',
+                      }}></div>
+                      <span style={{ fontSize: '11px' }}>{OCCUPATION_LABELS[cat]}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
+          />
+          <Scatter
+            data={bubbleData}
+            isAnimationActive={false}
+          >
+            {bubbleData.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={OCCUPATION_COLORS[entry.categoryKey]}
+                fillOpacity={0.7}
+              />
+            ))}
+          </Scatter>
+        </ScatterChart>
+      </ResponsiveContainer>
+    </div>
   </div>
 );
 }
+// ...existing code...
