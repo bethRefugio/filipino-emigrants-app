@@ -1,0 +1,184 @@
+.app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background: #f5f7fa;
+  min-height: 100vh;
+}
+
+h1 {
+  color: #1a202c;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.original-section {
+  margin-bottom: 3rem;
+}
+
+.original-section h2 {
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-shadow: none;
+  background: white;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-section {
+  margin-bottom: 3rem;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.chart-container h3 {
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.info p {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #4a5568;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  transition: box-shadow 0.2s ease;
+}
+
+.info p:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.controls-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.control-group label {
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.control-group select {
+  padding: 0.6rem 1rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: white;
+  cursor: pointer;
+  min-width: 200px;
+  color: #2d3748;
+  transition: all 0.2s ease;
+}
+
+.control-group select:hover {
+  border-color: #4299e1;
+}
+
+.control-group select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* Custom Tooltip Styles */
+.custom-tooltip {
+  background: white;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-width: 300px;
+}
+
+.tooltip-year {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tooltip-total {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4299e1;
+  margin: 0 0 0.75rem 0;
+}
+
+.tooltip-breakdown {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.breakdown-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0 0 0.5rem 0;
+}
+
+.breakdown-item {
+  font-size: 0.8rem;
+  color: #2d3748;
+  margin: 0.25rem 0;
+  padding-left: 0.25rem;
+}
+
+.breakdown-item strong {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.breakdown-percent {
+  color: #718096;
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}

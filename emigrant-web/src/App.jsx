@@ -11,6 +11,10 @@ import EducationPage from './pages/EducationPage';
 import OccupationPage from './pages/OccupationPage';
 import MajorDestinationPage from './pages/MajorDestinationPage';
 import OriginPage from './pages/OriginPage';
+import ForecastingPage from './forecasting/ForecastingPage'; // Changed from ./pages/ForecastingPage
+import AllModels from './forecasting/components/AllModels';
+import ForecastGraphPage from './forecasting/components/ForecastingGraphPage'
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -33,6 +37,22 @@ function App() {
           element={
             <MainLayout>
               <Dashboard />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/forecasting"
+          element={
+            <MainLayout>
+              <ForecastingPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/forecasting-graph"
+          element={
+            <MainLayout>
+              <ForecastGraphPage />
             </MainLayout>
           }
         />
@@ -60,7 +80,6 @@ function App() {
             </MainLayout>
           }
         />
-        
         <Route
           path="/education"
           element={
@@ -90,6 +109,14 @@ function App() {
           element={
             <MainLayout>
               <OriginPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/all-models"
+          element={
+            <MainLayout>
+              <AllModels />   
             </MainLayout>
           }
         />

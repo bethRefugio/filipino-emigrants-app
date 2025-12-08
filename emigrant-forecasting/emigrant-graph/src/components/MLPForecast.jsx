@@ -4,7 +4,7 @@ import { cleanData, sortData, normalizeData, denormalize, createSequences, calcu
 import { buildMLPModel, trainMLPModel, predictMLP, saveMLPModel, loadMLPModel, deleteMLPModel, downloadMLPModel } from '../models/mlpModel';
 import './ForecastPanel.css';
 
-export default function MLPForecast({ data }) {
+export default function MLPForecast({ data, datasetName = 'default' }) {
   const [isTraining, setIsTraining] = useState(false);
   const [trainingProgress, setTrainingProgress] = useState(null);
   const [metrics, setMetrics] = useState(null);
@@ -192,6 +192,18 @@ export default function MLPForecast({ data }) {
   };
 
   const chartData = [...data, ...forecasts];
+
+  const handleSaveModel = async () => {
+    if (!model) return;
+    try {
+      const modelName = `mlp-${datasetName}-${Date.now()}`;
+      await saveMLPModel(model, metadata, modelName);
+      alert('Model saved successfully!');
+    } catch (error) {
+      console.error('Error saving model:', error);
+      alert('Error saving model: ' + error.message);
+    }
+  };
 
   return (
     <div className="forecast-panel mlp-panel">

@@ -4,7 +4,7 @@ import { cleanData, sortData, normalizeData, denormalize, createSequences, calcu
 import { buildLSTMModel, trainLSTMModel, predictLSTM, saveLSTMModel, loadLSTMModel, deleteLSTMModel, downloadLSTMModel } from '../models/lstmModel';
 import './ForecastPanel.css';
 
-export default function LSTMForecast({ data }) {
+export default function LSTMForecast({ data, datasetName = 'default' }) {
   const [isTraining, setIsTraining] = useState(false);
   const [trainingProgress, setTrainingProgress] = useState(null);
   const [metrics, setMetrics] = useState(null);
@@ -191,25 +191,55 @@ export default function LSTMForecast({ data }) {
     }
   };
 
+  const handleSaveModel = async () => {
+    if (!model) return;
+    try {
+      const modelName = `lstm-${datasetName}-${Date.now()}`;
+      await saveLSTMModel(model, metadata, modelName);
+      alert('Model saved successfully!');
+    } catch (error) {
+      console.error('Error saving model:', error);
+      alert('Error saving model: ' + error.message);
+    }
+  };
+
   const chartData = [...data, ...forecasts];
 
   return (
     <div className="forecast-panel lstm-panel">
       <h2>LSTM Forecasting (Long Short-Term Memory)</h2>
 
-      <div className="control-buttons">
-        <button onClick={handleTrain} disabled={isTraining}>
-          {isTraining ? 'Training...' : 'Train LSTM Model'}
-        </button>
-        <button onClick={handleLoadModel} disabled={isTraining}>
-          Load Model
-        </button>
-        <button onClick={handleDeleteModel} disabled={isTraining || !model}>
-          Delete Model
-        </button>
-        <button onClick={handleDownloadModel} disabled={isTraining || !model}>
-          Download Model
-        </button>
+       {/* Header row: inputs left, buttons right */}
+      <div className="panel-header">
+        <div className="model-selector">
+          <label>
+            Lookback (suggested 3)
+            <input type="number" min="1" max="10" value={LOOKBACK /* or state if you switched */} onChange={() => { /* hook if using state */ }} />
+          </label>
+          <label>
+            LSTM Units (suggested 60)
+            <input type="number" min="8" max="256" value={60 /* or units */} onChange={() => { /* hook if using state */ }} />
+          </label>
+          <label>
+            Dropout (suggested 0.1)
+            <input type="number" step="0.05" min="0" max="0.8" value={0.1 /* or dropout */} onChange={() => { /* hook if using state */ }} />
+          </label>
+        </div>
+
+        <div className="control-buttons">
+          <button onClick={handleTrain} disabled={isTraining}>
+            {isTraining ? 'Training...' : 'Train LSTM Model'}
+          </button>
+          <button onClick={handleLoadModel} disabled={isTraining}>
+            Load Model
+          </button>
+          <button onClick={handleDeleteModel} disabled={isTraining || !model}>
+            Delete Model
+          </button>
+          <button onClick={handleDownloadModel} disabled={isTraining || !model}>
+            Download Model
+          </button>
+        </div>
       </div>
 
       {isTraining && trainingProgress && (

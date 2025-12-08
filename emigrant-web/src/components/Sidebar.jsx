@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, TrendingUp, Users, Globe, VenusAndMars, GraduationCap, BriefcaseBusiness, Plane, Earth, MapPinHouse, LogOut, UserRoundCog, UserCircle } from 'lucide-react';
+import { Menu, TrendingUp, Users, Globe, VenusAndMars, GraduationCap, BriefcaseBusiness, Plane, Earth, MapPinHouse, LogOut, UserRoundCog, UserCircle, LineChart } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useUserRole from './isPrivileged'
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const [user, setUser] = useState(null);
+    const { isPrivileged } = useUserRole();
 
     useEffect(() => {
        const stored = localStorage.getItem('user');
@@ -74,7 +76,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </button>
             </div>
 
-            <nav className="flex-1 p-4">
+            <nav className="flex-1 p-4 overflow-y-auto">
                 <div
                     className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/dashboard') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
                     onClick={() => navigate('/dashboard')}
@@ -82,6 +84,21 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <TrendingUp size={20} />
                     {sidebarOpen && <span className="font-medium">Dashboard</span>}
                 </div>
+
+                {/* Forecasting Section - only for privileged users */}
+                {isPrivileged(user?.role) && (
+                  <div
+                      className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/forecasting') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
+                      onClick={() => navigate('/forecasting')}
+                  >
+                      <LineChart size={20} />
+                      {sidebarOpen && <span className="font-medium">Forecasting</span>}
+                  </div>
+                )}
+
+                {/* Divider */}
+                {sidebarOpen && <div className="border-t my-3"></div>}
+
                 <div
                     className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/civil-status') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
                     onClick={() => navigate('/civil-status')}
@@ -97,7 +114,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     {sidebarOpen && <span>Age</span>}
                 </div>
                 <div
-                    className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/gender') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
+                    className={`flex items-center gap-3 p-3 mb-2 rounded-lg cursor-pointer ${isActive('/sex') ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-100'}`}
                     onClick={() => navigate('/sex')}
                 >
                     <VenusAndMars size={20} />

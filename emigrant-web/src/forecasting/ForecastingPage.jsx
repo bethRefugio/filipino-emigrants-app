@@ -1,24 +1,23 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import LSTMForecast from './components/LSTMForecast'
 import MLPForecast from './components/MLPForecast'
+import LineGraphs from './components/LineGraphs'
 import { AVAILABLE_DATASETS, fetchAggregatedYearlyData } from './services/dataService'
-import './App.css'
+import './forecasting.css'
+import { getBestOverallRun } from '../services/modelRuns'
 
-// Custom Tooltip Component
+// Custom Tooltip Component - WITHOUT percentages
 const CustomTooltip = ({ active, payload, label, datasetName, selectedDataset }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     const breakdown = data.breakdown || {};
     
-    // Determine if we should limit the breakdown display
     const shouldLimitBreakdown = ['origin', 'province'].includes(selectedDataset);
     const topLimit = 5;
     
-    // Get sorted breakdown entries
     let breakdownEntries = Object.entries(breakdown).sort(([, a], [, b]) => b - a);
-    
-    // Get top items and calculate "Others" if needed
     let displayEntries = breakdownEntries;
     let othersCount = 0;
     let othersTotal = 0;
@@ -45,17 +44,11 @@ const CustomTooltip = ({ active, payload, label, datasetName, selectedDataset })
             {displayEntries.map(([key, value]) => (
               <p key={key} className="breakdown-item">
                 • {key}: <strong>{value.toLocaleString()}</strong>
-                <span className="breakdown-percent">
-                  ({((value / data.emigrants) * 100).toFixed(1)}%)
-                </span>
               </p>
             ))}
             {othersCount > 0 && (
               <p className="breakdown-item breakdown-others">
                 • Others ({othersCount} more): <strong>{othersTotal.toLocaleString()}</strong>
-                <span className="breakdown-percent">
-                  ({((othersTotal / data.emigrants) * 100).toFixed(1)}%)
-                </span>
               </p>
             )}
           </div>
@@ -66,11 +59,13 @@ const CustomTooltip = ({ active, payload, label, datasetName, selectedDataset })
   return null;
 };
 
-function App() {
+function ForecastingPage() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedDataset, setSelectedDataset] = useState('sex')
   const [error, setError] = useState(null)
+  const [bestModel, setBestModel] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadData()
@@ -92,12 +87,21 @@ function App() {
       }
       
       setData(firebaseData)
+      
+      // Load best model for this dataset
+      const best = await getBestOverallRun(selectedDataset)
+      setBestModel(best)
+      
       setLoading(false)
     } catch (error) {
       console.error('Error loading data:', error)
       setError(error.message)
       setLoading(false)
     }
+  }
+
+  const handleNavigateToForecast = () => {
+    navigate(`/forecasting-graph`)
   }
 
   if (loading) {
@@ -144,12 +148,54 @@ function App() {
     )
   }
 
-  const currentDataset = AVAILABLE_DATASETS.find(d => d.id === selectedDataset);
+  const currentDataset = AVAILABLE_DATASETS.find(d => d.id === selectedDataset)
 
   return (
     <div className="app">
-      <h1>Emigrant Population Analysis & Forecasting</h1>
+      <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1.5rem', color: '#1f2937' }}>
+        Emigrant Population Analysis & Forecasting
+      </h1>
 
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
+        
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '10px' }}>
+          <button
+            onClick={handleNavigateToForecast}
+            style={{
+              padding: '10px 14px',
+              background: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontWeight: 500,
+              transition: 'background 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.background = '#059669'}
+            onMouseOut={(e) => e.target.style.background = '#10b981'}
+          >
+            📊 View Forecast Graph
+          </button>
+          <button
+            onClick={() => (window.location.href = '/all-models')}
+            style={{
+              padding: '10px 14px',
+              background: '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontWeight: 500,
+              transition: 'background 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.background = '#1d4ed8'}
+            onMouseOut={(e) => e.target.style.background = '#2563eb'}
+          >
+            📈 View Training History
+          </button>
+        </div>
+      </div>
+      
       {/* Dataset Selection */}
       <section className="controls-section">
         <div className="control-group">
@@ -184,12 +230,15 @@ function App() {
                 label={{ value: 'Year', position: 'insideBottom', offset: -10 }}
               />
               <YAxis
-                label={{ value: 'Emigrants', angle: -90, position: 'insideLeft' }}
+                label={{ value: 'Emigrants', angle: -90, position: 'left' }}
               />
               <Tooltip 
                 content={<CustomTooltip datasetName={currentDataset?.name} selectedDataset={selectedDataset} />}
               />
-              <Legend />
+              <Legend 
+                verticalAlign="bottom"
+                wrapperStyle={{ paddingTop: '20px' }} // space between legend and chart
+              />
               <Line
                 type="monotone"
                 dataKey="emigrants"
@@ -215,15 +264,21 @@ function App() {
 
       {/* LSTM Forecasting Section */}
       <section className="forecast-section">
-        <LSTMForecast data={data} datasetName={selectedDataset} />
+        <LSTMForecast 
+          data={data} 
+          datasetName={selectedDataset}
+        />
       </section>
 
       {/* MLP Forecasting Section */}
       <section className="forecast-section">
-        <MLPForecast data={data} datasetName={selectedDataset} />
+        <MLPForecast 
+          data={data} 
+          datasetName={selectedDataset}
+        />
       </section>
     </div>
   )
 }
 
-export default App
+export default ForecastingPage
