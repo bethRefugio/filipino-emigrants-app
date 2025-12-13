@@ -1,17 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 
-/**
- * Build MLP (Multi-Layer Perceptron) Model for Time Series Forecasting
- * Architecture:
- * - Input: Flattened sequence [lookback * features]
- * - Dense Layer 1: 64 units, ReLU activation, dropout 0.2
- * - Dense Layer 2: 32 units, ReLU activation, dropout 0.2
- * - Dense Output: 1 unit (emigrants prediction)
- * - Loss: MSE (Mean Squared Error)
- * - Optimizer: Adam (lr=0.001)
- * - Metrics: MAE (Mean Absolute Error)
- */
-export function buildMLPModel(lookback = 3, features = 2, units1 = 85, units2 = 74, activation1 = 'relu', activation2 = 'tanh') {
+export function buildMLPModel(lookback = 3, features = 2, units1 = 85, units2 = 74, activation1 = 'relu', activation2 = 'tanh', outputSize = 1) {
   const model = tf.sequential();
 
   const inputSize = lookback * features;
@@ -33,9 +22,10 @@ export function buildMLPModel(lookback = 3, features = 2, units1 = 85, units2 = 
 
   model.add(tf.layers.dropout({ rate: 0.2 }));
 
-  // Output layer
+  // Output layer - supports multiple outputs
   model.add(tf.layers.dense({
-    units: 1
+    units: outputSize,
+    activation: 'linear'
   }));
 
   model.compile({
@@ -47,36 +37,17 @@ export function buildMLPModel(lookback = 3, features = 2, units1 = 85, units2 = 
   return model;
 }
 
-/**
- * Flatten sequences for MLP input
- * MLP expects 2D input: [samples, features]
- * We flatten the 3D sequences to 2D
- */
 function flattenSequences(X) {
   return X.map(seq => seq.flat());
 }
 
-/**
- * Train MLP Model
- * @param {tf.Sequential} model - The MLP model
- * @param {Array} X - Input sequences (will be flattened)
- * @param {Array} y - Target values
- * @param {Function} onEpochEnd - Callback for epoch progress
- * @param {number} epochs - Number of training epochs (default: 100)
- * @param {number} validationSplit - Validation split ratio (default: 0.2)
- */
 export async function trainMLPModel(model, X, y, onEpochEnd, epochs = 100, validationSplit = 0.2) {
-  // Flatten sequences for MLP
   const flatX = flattenSequences(X);
-
-  // Convert to tensors
   const xs = tf.tensor2d(flatX);
-  const ys = tf.tensor2d(y, [y.length, 1]);
+  const ys = tf.tensor2d(y);
 
-  // Determine batch size
   const batchSize = Math.min(32, X.length);
 
-  // Train model
   const history = await model.fit(xs, ys, {
     epochs,
     batchSize,
@@ -90,16 +61,12 @@ export async function trainMLPModel(model, X, y, onEpochEnd, epochs = 100, valid
     }
   });
 
-  // Cleanup tensors
   xs.dispose();
   ys.dispose();
 
   return history;
 }
 
-/**
- * Make predictions using MLP model
- */
 export async function predictMLP(model, X) {
   const flatX = flattenSequences(X);
   const xs = tf.tensor2d(flatX);
@@ -109,21 +76,15 @@ export async function predictMLP(model, X) {
   xs.dispose();
   predictions.dispose();
 
-  return result.map(r => r[0]);
+  return result[0]; // Return array for multiple outputs
 }
 
-/**
- * Save MLP model to IndexedDB
- */
 export async function saveMLPModel(model, metadata) {
   const dataset = metadata.dataset || 'default';
   await model.save(`indexeddb://emigrants-mlp-model-${dataset}`);
   localStorage.setItem(`mlp-metadata-${dataset}`, JSON.stringify(metadata));
 }
 
-/**
- * Load MLP model from IndexedDB
- */
 export async function loadMLPModel(dataset = 'default') {
   try {
     const model = await tf.loadLayersModel(`indexeddb://emigrants-mlp-model-${dataset}`);
@@ -142,7 +103,7 @@ export async function getFullMetadata() {
       const db = e.target.result;
       const tx = db.transaction('models', 'readonly');
       const store = tx.objectStore('models');
-      const getReq = store.get('mlp_model'); // Changed from 'mlp_metadata'
+      const getReq = store.get('mlp_model');
       getReq.onsuccess = () => {
         const result = getReq.result;
         if (result && result.metadata) {
@@ -159,11 +120,9 @@ export async function getFullMetadata() {
 
 export async function uploadMLPModel(modelFiles, metadataFile) {
   try {
-    // Read metadata JSON
     const metadataText = await metadataFile.text();
     const metadata = JSON.parse(metadataText);
 
-    // Find and read model.json
     const modelJsonFile = Array.from(modelFiles).find(f => f.name.endsWith('model.json'));
     if (!modelJsonFile) {
       throw new Error('model.json file not found');
@@ -172,18 +131,15 @@ export async function uploadMLPModel(modelFiles, metadataFile) {
     const modelJsonText = await modelJsonFile.text();
     const modelJson = JSON.parse(modelJsonText);
 
-    // Read weight files and combine into single buffer
     let weightData = new ArrayBuffer(0);
     let weightSpecs = [];
 
     if (modelJson.weightsManifest && Array.isArray(modelJson.weightsManifest)) {
       for (const manifest of modelJson.weightsManifest) {
-        // Extract weight specs from manifest
         if (manifest.weights) {
           weightSpecs = weightSpecs.concat(manifest.weights);
         }
 
-        // Read weight files (usually .bin files)
         for (const path of manifest.paths) {
           const fileName = path.split('/').pop();
           const weightFile = Array.from(modelFiles).find(f => f.name === fileName);
@@ -200,7 +156,6 @@ export async function uploadMLPModel(modelFiles, metadataFile) {
       }
     }
 
-    // Create proper ModelArtifacts object with weightSpecs
     const modelArtifacts = {
       modelTopology: modelJson.modelTopology,
       weightSpecs: weightSpecs,
@@ -212,10 +167,7 @@ export async function uploadMLPModel(modelFiles, metadataFile) {
       backend: modelJson.backend
     };
 
-    // Load model from memory using single argument
     const model = await tf.loadLayersModel(tf.io.fromMemory(modelArtifacts));
-
-    // Save to IndexedDB
     await model.save('indexeddb://emigrants-mlp-model');
     localStorage.setItem('mlp-metadata', JSON.stringify(metadata));
 
@@ -226,9 +178,6 @@ export async function uploadMLPModel(modelFiles, metadataFile) {
   }
 }
 
-/**
- * Delete MLP model from IndexedDB
- */
 export async function deleteMLPModel(dataset = 'default') {
   try {
     await tf.io.removeModel(`indexeddb://emigrants-mlp-model-${dataset}`);
@@ -240,14 +189,9 @@ export async function deleteMLPModel(dataset = 'default') {
   }
 }
 
-/**
- * Download MLP model files
- */
 export async function downloadMLPModel(model, metadata) {
-  // Save model to downloads
   await model.save('downloads://emigrants-mlp-model');
 
-  // Download metadata
   const metadataBlob = new Blob([JSON.stringify(metadata, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(metadataBlob);
   const a = document.createElement('a');

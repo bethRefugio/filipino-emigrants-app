@@ -11,10 +11,9 @@ import * as tf from '@tensorflow/tfjs';
  * - Optimizer: Adam (lr=0.001)
  * - Metrics: MAE (Mean Absolute Error)
  */
-export function buildLSTMModel(lookback = 3, features = 2, units1 = 60, units2 = 60, dropout1 = 0.1, dropout2 = 0.1) {
+export function buildLSTMModel(lookback = 3, features = 2, units1 = 60, units2 = 60, dropout1 = 0.1, dropout2 = 0.1, outputSize = 1) {
   const model = tf.sequential();
 
-  // First LSTM layer
   model.add(tf.layers.lstm({
     units: units1,
     returnSequences: true,
@@ -22,18 +21,17 @@ export function buildLSTMModel(lookback = 3, features = 2, units1 = 60, units2 =
     dropout: dropout1
   }));
 
-  // Second LSTM layer
   model.add(tf.layers.lstm({
     units: units2,
     dropout: dropout2
   }));
 
-  // Output layer
+  // Output layer - must match outputSize
   model.add(tf.layers.dense({
-    units: 1
+    units: outputSize,
+    activation: 'linear'  // Use linear activation for regression
   }));
 
-  // Compile model
   model.compile({
     optimizer: tf.train.adam(0.001),
     loss: 'meanSquaredError',
@@ -53,14 +51,11 @@ export function buildLSTMModel(lookback = 3, features = 2, units1 = 60, units2 =
  * @param {number} validationSplit - Validation split ratio (default: 0.2)
  */
 export async function trainLSTMModel(model, X, y, onEpochEnd, epochs = 100, validationSplit = 0.2) {
-  // Convert to tensors
   const xs = tf.tensor3d(X);
-  const ys = tf.tensor2d(y, [y.length, 1]);
+  const ys = tf.tensor2d(y);
 
-  // Determine batch size
   const batchSize = Math.min(32, X.length);
 
-  // Train model
   const history = await model.fit(xs, ys, {
     epochs,
     batchSize,
@@ -74,7 +69,6 @@ export async function trainLSTMModel(model, X, y, onEpochEnd, epochs = 100, vali
     }
   });
 
-  // Cleanup tensors
   xs.dispose();
   ys.dispose();
 
@@ -92,7 +86,7 @@ export async function predictLSTM(model, X) {
   xs.dispose();
   predictions.dispose();
 
-  return result.map(r => r[0]);
+  return result[0]; // Return array of predictions for all outputs
 }
 
 /**

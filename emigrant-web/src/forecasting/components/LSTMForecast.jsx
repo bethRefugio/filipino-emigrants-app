@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { cleanData, sortData, normalizeData, denormalize, createSequences, calculateMetrics } from '../utils/dataPreparation';
+import { cleanData, sortData, normalizeData, denormalize, createSequences, calculateMetrics, createSequencesWithBreakdown, denormalizeBreakdown} from '../utils/dataPreparation';
 import {
   buildLSTMModel,
   trainLSTMModel,
   predictLSTM,
   saveLSTMModel,
   loadLSTMModel,
-  deleteLSTMModel,
+  deleteLSTMModel, 
   downloadLSTMModel,
   uploadLSTMModel,
   getFullMetadata
@@ -48,90 +48,149 @@ export default function LSTMForecast({ data, datasetName }) {
   }
 
   const handleTrain = async () => {
-    setIsTraining(true);
-    setTrainingProgress({ epoch: 0, loss: 0, mae: 0 });
-    setMetrics(null);
+  setIsTraining(true);
+  setTrainingProgress({ epoch: 0, loss: 0, mae: 0 });
+  setMetrics(null);
+  setValidationResults([]);
 
-    try {
-      let cleanedData = cleanData(data);
-      cleanedData = sortData(cleanedData);
+  try {
+    let cleanedData = cleanData(data);
+    cleanedData = sortData(cleanedData);
 
-      const { normalized, mins, maxs } = normalizeData(cleanedData, FEATURES);
-      const { X, y } = createSequences(normalized, lookback, FEATURES, TARGET);
+    // Extract breakdown keys from first data point
+    const breakdownKeys = Object.keys(cleanedData[0].breakdown || {});
+    const allFeatures = ['emigrants', ...breakdownKeys];
 
-      const newModel = buildModel(lookback, FEATURES.length, units1, units2, dropout1, dropout2);
+    const { normalized, mins, maxs } = normalizeData(cleanedData, allFeatures);
+    
+    // Create sequences with breakdown targets
+    const { X, y } = createSequencesWithBreakdown(normalized, lookback, ['emigrants'], TARGET, breakdownKeys);
 
-      const onEpochEnd = (epoch, logs) => {
-        setTrainingProgress({
-          epoch: epoch + 1,
-          loss: logs.loss.toFixed(6),
-          mae: logs.mae.toFixed(6),
-          val_loss: logs.val_loss?.toFixed(6),
-          val_mae: logs.val_mae?.toFixed(6)
-        });
-      };
+    console.log('Original data length:', cleanedData.length);
+    console.log('X shape:', X.length, 'x', X[0].length, 'x', X[0][0].length);
+    console.log('y shape:', y.length, 'x', y[0].length);
 
-      await trainLSTMModel(newModel, X, y, onEpochEnd, 50, 0.2);
+    // Output size = 1 (total) + breakdown categories
+    const outputSize = 1 + breakdownKeys.length;
+    const newModel = buildLSTMModel(lookback, 1, units1, units2, dropout1, dropout2, outputSize);
 
-      const normalizedPredictions = await predictLSTM(newModel, X);
-      const predictions = normalizedPredictions.map(pred => denormalize(pred, mins[TARGET], maxs[TARGET]));
-      const actualValues = y.map(val => denormalize(val, mins[TARGET], maxs[TARGET]));
-
-      const trainSize = Math.floor(actualValues.length * 0.8);
-      const resultsData = actualValues.slice(trainSize).map((actual, index) => ({
-        year: cleanedData[trainSize + index + lookback].year,
-        actual: Math.round(actual),
-        predicted: Math.round(predictions[trainSize + index]),
-        error: Math.round(predictions[trainSize + index] - actual)
-      }));
-      setValidationResults(resultsData);
-
-      const calculatedMetrics = calculateMetrics(actualValues, predictions);
-      setMetrics(calculatedMetrics);
-
-      const newMetadata = {
-        modelType: 'LSTM',
-        lookback,
-        units1,
-        units2,
-        dropout1,
-        dropout2,
-        features: FEATURES,
-        target: TARGET,
-        mins,
-        maxs,
-        lastYear: cleanedData[cleanedData.length - 1].year,
-        lastData: cleanedData.slice(-lookback),
-        metrics: calculatedMetrics,
-        trainedAt: new Date().toISOString(),
-        dataset: datasetName  // should be the id like 'sex', not display name
-      };
-
-      await saveLSTMModel(newModel, newMetadata);
-      await saveModelRun('LSTM', {
-        dataset: datasetName,
-        lookback,
-        units: `${units1}/${units2}`,
-        dropout: `${dropout1}/${dropout2}`,
-        mae: calculatedMetrics.mae,
-        accuracy: calculatedMetrics.accuracy,
-        rmse: calculatedMetrics.rmse,
-        r2: calculatedMetrics.r2,
-        mape: calculatedMetrics.mape,
-        trainedAt: newMetadata.trainedAt
+    const onEpochEnd = (epoch, logs) => {
+      setTrainingProgress({
+        epoch: epoch + 1,
+        loss: logs.loss.toFixed(6),
+        mae: logs.mae.toFixed(6),
+        val_loss: logs.val_loss?.toFixed(6),
+        val_mae: logs.val_mae?.toFixed(6)
       });
+    };
 
-      setModel(newModel);
-      setMetadata(newMetadata);
+    await trainLSTMModel(newModel, X, y, onEpochEnd, 50, 0.2);
 
-      showNotice('success', `LSTM model trained!\nMAE: ${calculatedMetrics.mae}\nAccuracy: ${calculatedMetrics.accuracy}%`);
-    } catch (error) {
-      console.error('Training error:', error);
-      showNotice('error', 'Error training model: ' + error.message);
-    } finally {
-      setIsTraining(false);
+    // Get predictions as 2D array [batch_size, outputSize]
+    const xs = tf.tensor3d(X);
+    const predTensor = newModel.predict(xs);
+    const normalizedPredictions = await predTensor.array();
+    xs.dispose();
+    predTensor.dispose();
+
+    console.log('Predictions shape:', normalizedPredictions.length, 'x', normalizedPredictions[0].length);
+
+    // Denormalize predictions
+    const predictions = normalizedPredictions.map(pred => {
+      return denormalizeBreakdown(pred, mins, maxs, TARGET, breakdownKeys);
+    });
+
+    // Denormalize actual values from y
+    const actualValues = y.map((row) => {
+      const actual = {};
+      actual[TARGET] = denormalize(row[0], mins[TARGET], maxs[TARGET]);
+      breakdownKeys.forEach((key, i) => {
+        actual[key] = denormalize(row[i + 1], mins[key], maxs[key]);
+      });
+      return actual;
+    });
+
+    // Calculate metrics on total only
+    const totalPredictions = predictions.map(p => p[TARGET]).filter(v => Number.isFinite(v));
+    const totalActuals = actualValues.map(a => a[TARGET]).filter(v => Number.isFinite(v));
+
+    console.log('Total predictions:', totalPredictions.length, totalPredictions.slice(0, 5));
+    console.log('Total actuals:', totalActuals.length, totalActuals.slice(0, 5));
+
+    if (totalPredictions.length === 0 || totalActuals.length === 0) {
+      throw new Error('No valid predictions generated');
     }
-  };
+
+    const calculatedMetrics = calculateMetrics(totalActuals, totalPredictions);
+    console.log('Calculated metrics:', calculatedMetrics);
+
+    // Set metrics IMMEDIATELY after calculation
+    setMetrics(calculatedMetrics);
+
+    // Create validation results table (20% test split)
+    const trainSize = Math.floor(totalActuals.length * 0.8);
+    const resultsData = [];
+    
+    // Create results from test split
+    for (let i = trainSize; i < totalActuals.length; i++) {
+      const yearIndex = i + lookback; // Map back to original cleanedData index
+      if (yearIndex < cleanedData.length) {
+        resultsData.push({
+          year: cleanedData[yearIndex].year,
+          actual: Math.round(totalActuals[i]),
+          predicted: Math.round(totalPredictions[i]),
+          error: Math.round(totalPredictions[i] - totalActuals[i])
+        });
+      }
+    }
+
+    console.log('Validation results:', resultsData.length, resultsData);
+    setValidationResults(resultsData);
+
+    const newMetadata = {
+      modelType: 'LSTM',
+      lookback,
+      units1,
+      units2,
+      dropout1,
+      dropout2,
+      features: allFeatures,
+      target: TARGET,
+      breakdownKeys,
+      mins,
+      maxs,
+      lastYear: cleanedData[cleanedData.length - 1].year,
+      lastData: cleanedData.slice(-lookback),
+      metrics: calculatedMetrics,
+      trainedAt: new Date().toISOString(),
+      dataset: datasetName
+    };
+
+    await saveLSTMModel(newModel, newMetadata);
+    await saveModelRun('LSTM', {
+      dataset: datasetName,
+      lookback,
+      units: `${units1}/${units2}`,
+      dropout: `${dropout1}/${dropout2}`,
+      mae: calculatedMetrics.mae,
+      accuracy: calculatedMetrics.accuracy,
+      rmse: calculatedMetrics.rmse,
+      r2: calculatedMetrics.r2,
+      mape: calculatedMetrics.mape,
+      trainedAt: newMetadata.trainedAt
+    });
+
+    setModel(newModel);
+    setMetadata(newMetadata);
+
+    showNotice('success', `LSTM model trained with breakdown!\nMAE: ${calculatedMetrics.mae}\nAccuracy: ${calculatedMetrics.accuracy}%`);
+  } catch (error) {
+    console.error('Training error:', error);
+    showNotice('error', 'Error training model: ' + error.message);
+  } finally {
+    setIsTraining(false);
+  }
+};
 
   // helper to split "60/60" -> [60,60] or default
   const splitPair = (val = '', def = [0, 0]) => {
@@ -276,53 +335,101 @@ export default function LSTMForecast({ data, datasetName }) {
   };
 
   const handleForecast = async () => {
-    if (!model || !metadata) {
-      showNotice('error', 'Please train or load a model first.');
-      return;
-    }
+  if (!model || !metadata) {
+    showNotice('error', 'Please train or load a model first.');
+    return;
+  }
 
-    try {
-      const { mins, maxs, lastData } = metadata;
-      let currentSequence = lastData.map(row => ({
-        year: row.year,
-        emigrants: row.emigrants
+  try {
+    const { mins, maxs, lastData, breakdownKeys } = metadata;
+    
+    let currentSequence = lastData.map(row => ({
+      year: row.year,
+      emigrants: row.emigrants,
+      breakdown: row.breakdown || {}
+    }));
+
+    const predictions = [];
+    let currentYear = metadata.lastYear;
+
+    for (let i = 0; i < forecastYears; i++) {
+      // Only normalize emigrants for input
+      const normalized = currentSequence.map(row => ({
+        emigrants: (row.emigrants - mins.emigrants) / (maxs.emigrants - mins.emigrants)
       }));
 
-      const predictions = [];
-      let currentYear = metadata.lastYear;
-
-      for (let i = 0; i < forecastYears; i++) {
-        const normalized = currentSequence.map(row => ({
-          emigrants: (row.emigrants - mins.emigrants) / (maxs.emigrants - mins.emigrants)
-        }));
-
-        const input = [normalized.map(row => FEATURES.map(f => row[f]))];
-        const normalizedPred = await predictLSTM(model, input);
-        const predictedEmigrants = denormalize(normalizedPred[0], mins[TARGET], maxs[TARGET]);
-
-        currentYear++;
-        predictions.push({
-          year: currentYear.toString(),
-          emigrants: Math.round(predictedEmigrants),
-          isForecast: true
-        });
-
-        currentSequence = [
-          ...currentSequence.slice(1),
-          {
-            year: currentYear,
-            emigrants: predictedEmigrants
+      // Input: [1, lookback, 1] - only emigrants feature
+      const input = [normalized.map(row => [row.emigrants])];
+      const normalizedPred = await predictLSTM(model, input);
+      
+      // Denormalize total emigrants
+      const totalEmigrants = denormalize(normalizedPred[0], mins.emigrants, maxs.emigrants);
+      
+      // Calculate breakdown as proportions
+      const breakdown = {};
+      let breakdownSum = 0;
+      
+      if (breakdownKeys && breakdownKeys.length > 0) {
+        // Get denormalized breakdown predictions
+        const breakdownPredictions = breakdownKeys.map((key, idx) => 
+          denormalize(normalizedPred[idx + 1], mins[key], maxs[key])
+        );
+        
+        // Calculate sum of breakdown predictions
+        breakdownSum = breakdownPredictions.reduce((sum, val) => sum + val, 0);
+        
+        // Scale breakdown to match total emigrants
+        if (breakdownSum > 0) {
+          breakdownKeys.forEach((key, idx) => {
+            const proportion = breakdownPredictions[idx] / breakdownSum;
+            breakdown[key] = Math.round(totalEmigrants * proportion);
+          });
+          
+          // Adjust for rounding errors - add/subtract difference to largest category
+          const calculatedSum = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
+          const difference = Math.round(totalEmigrants) - calculatedSum;
+          
+          if (difference !== 0) {
+            const largestKey = breakdownKeys.reduce((max, key) => 
+              breakdown[key] > breakdown[max] ? key : max
+            , breakdownKeys[0]);
+            breakdown[largestKey] += difference;
           }
-        ];
+        } else {
+          // Fallback: equal distribution
+          const perCategory = Math.floor(totalEmigrants / breakdownKeys.length);
+          breakdownKeys.forEach((key, idx) => {
+            breakdown[key] = idx === 0 ? Math.round(totalEmigrants) - perCategory * (breakdownKeys.length - 1) : perCategory;
+          });
+        }
       }
 
-      setForecasts(predictions);
-      showNotice('success', `Generated ${forecastYears} year LSTM forecast.`);
-    } catch (error) {
-      console.error('Forecasting error:', error);
-      showNotice('error', 'Error generating forecast: ' + error.message);
+      currentYear++;
+      predictions.push({
+        year: currentYear.toString(),
+        emigrants: Math.round(totalEmigrants),
+        breakdown,
+        isForecast: true
+      });
+
+      // Update sequence with new prediction
+      currentSequence = [
+        ...currentSequence.slice(1),
+        { 
+          year: currentYear, 
+          emigrants: Math.round(totalEmigrants),
+          breakdown
+        }
+      ];
     }
-  };
+
+    setForecasts(predictions);
+    showNotice('success', `Generated ${forecastYears} year LSTM forecast with breakdown.`);
+  } catch (error) {
+    console.error('Forecasting error:', error);
+    showNotice('error', 'Error generating forecast: ' + error.message);
+  }
+};
 
   const chartData = [...data, ...forecasts];
 
@@ -553,7 +660,7 @@ export default function LSTMForecast({ data, datasetName }) {
       {isTraining && trainingProgress && (
         <div className="training-progress">
           <h3>Training Progress</h3>
-          <p>Epoch: {trainingProgress.epoch} / 100</p>
+          <p>Epoch: {trainingProgress.epoch} / 50</p>
           <p>Loss: {trainingProgress.loss}</p>
           <p>MAE: {trainingProgress.mae}</p>
           {trainingProgress.val_loss && (
@@ -645,73 +752,107 @@ export default function LSTMForecast({ data, datasetName }) {
       )}
 
       {forecasts.length > 0 && (
-        <>
-          <div className="chart-container">
-            <h3>LSTM: Historical + Forecast</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart
-                data={chartData}
-                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis
-                  label={{ value: 'Emigrants', angle: -90, position: 'insideLeft' }}
-                />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey={(entry) => entry.isForecast ? null : entry.emigrants}
-                  stroke="#82ca9d"
-                  strokeWidth={2}
-                  name="Emigrants (Historical)"
-                  dot={(props) => {
-                    const { cx, cy, payload } = props;
-                    if (payload.isForecast || !payload.emigrants) return null;
-                    return <circle cx={cx} cy={cy} r={3} fill="#82ca9d" />;
-                  }}
-                  connectNulls={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey={(entry) => entry.isForecast ? entry.emigrants : null}
-                  stroke="#ff6b6b"
-                  strokeWidth={2}
-                  strokeDasharray="5 5"
-                  name="Emigrants (LSTM Forecast)"
-                  dot={(props) => {
-                    const { cx, cy, payload } = props;
-                    if (!payload.isForecast || !payload.emigrants) return null;
-                    return <circle cx={cx} cy={cy} r={4} fill="#ff6b6b" />;
-                  }}
-                  connectNulls={false}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+  <>
+    <div className="chart-container">
+      <h3>LSTM: Historical + Forecast</h3>
+      <ResponsiveContainer width="100%" height={400}>
+        <LineChart
+          data={chartData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="year" />
+          <YAxis
+            label={{ value: 'Emigrants', angle: -90, position: 'insideLeft' }}
+          />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey={(entry) => entry.isForecast ? null : entry.emigrants}
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="Emigrants (Historical)"
+            dot={(props) => {
+              const { cx, cy, payload } = props;
+              if (payload.isForecast || !payload.emigrants) return null;
+              return <circle cx={cx} cy={cy} r={3} fill="#82ca9d" />;
+            }}
+            connectNulls={false}
+          />
+          <Line
+            type="monotone"
+            dataKey={(entry) => entry.isForecast ? entry.emigrants : null}
+            stroke="#ff6b6b"
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            name="Emigrants (LSTM Forecast)"
+            dot={(props) => {
+              const { cx, cy, payload } = props;
+              if (!payload.isForecast || !payload.emigrants) return null;
+              return <circle cx={cx} cy={cy} r={4} fill="#ff6b6b" />;
+            }}
+            connectNulls={false}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
 
-          <div className="forecast-results">
-            <h3>LSTM Forecast Results</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Year</th>
-                  <th>Predicted Emigrants</th>
-                </tr>
-              </thead>
-              <tbody>
-                {forecasts.map((f, i) => (
-                  <tr key={i}>
-                    <td>{f.year}</td>
-                    <td>{f.emigrants.toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
+    <div className="forecast-results">
+      <h3>LSTM Forecast Results with Breakdown</h3>
+      <div className="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              {metadata?.breakdownKeys && metadata.breakdownKeys.length > 0 && 
+                (() => {
+                  const ageOrder = ['0-14', '15-24', '25-34', '35-44', '45-54', '55-64', '65+', 'Not Reported'];
+                  const sortedKeys = metadata.breakdownKeys.sort((a, b) => {
+                    const indexA = ageOrder.indexOf(a);
+                    const indexB = ageOrder.indexOf(b);
+                    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                    if (indexA !== -1) return -1;
+                    if (indexB !== -1) return 1;
+                    return a.localeCompare(b);
+                  });
+                  return sortedKeys.map(key => (
+                    <th key={key}>{key}</th>
+                  ));
+                })()
+              }
+              <th>Total Predicted Emigrants</th>
+            </tr>
+          </thead>
+          <tbody>
+            {forecasts.map((f, i) => (
+              <tr key={i}>
+                <td>{f.year}</td>
+                {metadata?.breakdownKeys && metadata.breakdownKeys.length > 0 && 
+                  (() => {
+                    const ageOrder = ['0-14', '15-24', '25-34', '35-44', '45-54', '55-64', '65+', 'Not Reported'];
+                    const sortedKeys = metadata.breakdownKeys.sort((a, b) => {
+                      const indexA = ageOrder.indexOf(a);
+                      const indexB = ageOrder.indexOf(b);
+                      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                      if (indexA !== -1) return -1;
+                      if (indexB !== -1) return 1;
+                      return a.localeCompare(b);
+                    });
+                    return sortedKeys.map(key => (
+                      <td key={key}>{f.breakdown?.[key]?.toLocaleString() || 'N/A'}</td>
+                    ));
+                  })()
+                }
+                <td style={{ fontWeight: 700 }}>{f.emigrants.toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </>
+)}
 
       <div className="info-box">
         <h4>LSTM Model Configuration</h4>

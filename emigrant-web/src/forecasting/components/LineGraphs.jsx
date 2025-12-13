@@ -61,6 +61,7 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
   const [forecastYears, setForecastYears] = useState(1)
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState(null)
+  const [metadata, setMetadata] = useState(null) // Add this line
 
   const [notice, setNotice] = useState({ open: false, type: 'success', message: '' })
   const showNotice = (type, message) => setNotice({ open: true, type, message })
@@ -71,14 +72,13 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
   const handleGenerateForecast = async () => {
   setIsGenerating(true)
   setError(null)
-  
+
   try {
     const best = await getBestRun(modelType, selectedDataset)
     if (!best) {
       throw new Error(`No best ${modelType} run found for dataset "${selectedDataset}". Please train or upload a model first.`)
     }
 
-    // Load model for THIS dataset
     let loaded
     if (modelType === 'LSTM') {
       loaded = await loadLSTMModel(selectedDataset)
@@ -90,40 +90,93 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
       throw new Error(`${modelType} model weights/metadata not found for "${selectedDataset}". Please train a model first.`)
     }
 
-    const { model, metadata } = loaded
-    const { mins, maxs, lastData, lookback, lastYear } = metadata
+    const { model, metadata: loadedMetadata } = loaded
+    setMetadata(loadedMetadata)
+    
+    const { mins, maxs, lastData, lookback, lastYear, breakdownKeys } = loadedMetadata
 
-    // Generate forecasts iteratively
-    let currentSequence = lastData.map(row => ({ year: row.year, emigrants: row.emigrants }))
+    let currentSequence = lastData.map(row => ({ 
+      year: row.year, 
+      emigrants: row.emigrants, 
+      breakdown: row.breakdown || {}
+    }))
     const predictions = []
     let currentYear = lastYear
 
     const yearsToPredict = Math.max(1, parseInt(forecastYears || '1'))
 
     for (let i = 0; i < yearsToPredict; i++) {
+      // Only use 'emigrants' for input
       const normalized = currentSequence.map(row => ({
         emigrants: (row.emigrants - mins.emigrants) / (maxs.emigrants - mins.emigrants)
-      }))
-      const input = [normalized.map(row => FEATURES.map(f => row[f]))]
+      }));
 
-      const normalizedPred =
-        modelType === 'LSTM' ? await predictLSTM(model, input) : await predictMLP(model, input)
+      // Input shape: [1, lookback, 1]
+      const input = [normalized.map(row => [row.emigrants])]
+      const normalizedPred = modelType === 'LSTM' ? await predictLSTM(model, input) : await predictMLP(model, input)
 
-      const predictedEmigrants = denormalize(normalizedPred[0], mins[TARGET], maxs[TARGET])
+      // Denormalize total emigrants
+      const totalEmigrants = denormalize(normalizedPred[0], mins.emigrants, maxs.emigrants);
+      
+      // Calculate breakdown as proportions
+      const breakdown = {};
+      
+      if (breakdownKeys && breakdownKeys.length > 0) {
+        // Get denormalized breakdown predictions
+        const breakdownPredictions = breakdownKeys.map((key, idx) => 
+          denormalize(normalizedPred[idx + 1], mins[key], maxs[key])
+        );
+        
+        // Calculate sum
+        const breakdownSum = breakdownPredictions.reduce((sum, val) => sum + val, 0);
+        
+        // Scale to match total
+        if (breakdownSum > 0) {
+          breakdownKeys.forEach((key, idx) => {
+            const proportion = breakdownPredictions[idx] / breakdownSum;
+            breakdown[key] = Math.round(totalEmigrants * proportion);
+          });
+          
+          // Adjust for rounding errors
+          const calculatedSum = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
+          const difference = Math.round(totalEmigrants) - calculatedSum;
+          
+          if (difference !== 0) {
+            const largestKey = breakdownKeys.reduce((max, key) => 
+              breakdown[key] > breakdown[max] ? key : max
+            , breakdownKeys[0]);
+            breakdown[largestKey] += difference;
+          }
+        } else {
+          // Fallback: equal distribution
+          const perCategory = Math.floor(totalEmigrants / breakdownKeys.length);
+          breakdownKeys.forEach((key, idx) => {
+            breakdown[key] = idx === 0 ? Math.round(totalEmigrants) - perCategory * (breakdownKeys.length - 1) : perCategory;
+          });
+        }
+      }
 
       currentYear++
       predictions.push({
         year: currentYear.toString(),
-        emigrants: Math.round(predictedEmigrants),
+        emigrants: Math.round(totalEmigrants),
+        breakdown,
         isForecast: true
-      })
+      });
 
-      // Slide window
-      currentSequence = [...currentSequence.slice(1), { year: currentYear, emigrants: predictedEmigrants }]
+      // Update sequence
+      currentSequence = [
+        ...currentSequence.slice(1), 
+        { 
+          year: currentYear, 
+          emigrants: Math.round(totalEmigrants),
+          breakdown 
+        }
+      ]
     }
 
     if (onForecastUpdate) onForecastUpdate(predictions)
-    showNotice('success', `Generated ${yearsToPredict} year(s) forecast using BEST ${modelType} model for "${selectedDataset}".`)
+    showNotice('success', `Generated ${yearsToPredict} year(s) forecast with breakdown using BEST ${modelType} model.`)
   } catch (error) {
     console.error('Error generating forecast:', error)
     setError(error.message)
@@ -343,7 +396,7 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
         </ResponsiveContainer>
       </div>
 
-      {/* Forecast Table */}
+      {/* Forecast Table with Breakdown */}
       {forecasts.length > 0 && (
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ 
@@ -352,7 +405,7 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
             overflow: 'hidden',
             boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             width: '100%',
-            maxWidth: '850px'
+            maxWidth: '1000px'
           }}>
             <div style={{
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
@@ -363,68 +416,73 @@ function LineGraphs({ data, selectedDataset, datasetName, forecasts, onForecastU
                 margin: 0, 
                 color: 'white',
                 fontSize: '17px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
+                fontWeight: 600
               }}>
-                📊 Forecast Details ({modelType} Model)
+                📊 Forecast Details with Breakdown ({modelType} Model)
               </h3>
             </div>
             
             <div style={{ overflowX: 'auto' }}>
               <table style={{
                 width: '100%',
-                borderCollapse: 'collapse',
-                tableLayout: 'fixed'
+                borderCollapse: 'collapse'
               }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-                    <th style={{ 
-                      padding: '12px 16px', 
-                      textAlign: 'center',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      color: '#374151'
-                    }}>
+                    <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: '14px', color: '#374151' }}>
                       Year
                     </th>
-                    <th style={{ 
-                      padding: '12px 16px', 
-                      textAlign: 'center',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      color: '#374151'
-                    }}>
-                      Predicted Emigrants
+                    {metadata?.breakdownKeys && metadata.breakdownKeys.length > 0 && 
+                      (() => {
+                        const ageOrder = ['0-14', '15-24', '25-34', '35-44', '45-54', '55-64', '65+', 'Not Reported'];
+                        const sortedKeys = [...metadata.breakdownKeys].sort((a, b) => {
+                          const indexA = ageOrder.indexOf(a);
+                          const indexB = ageOrder.indexOf(b);
+                          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                          if (indexA !== -1) return -1;
+                          if (indexB !== -1) return 1;
+                          return a.localeCompare(b);
+                        });
+                        return sortedKeys.map(key => (
+                          <th key={key} style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: '14px', color: '#374151' }}>
+                            {key}
+                          </th>
+                        ));
+                      })()
+                    }
+                    <th style={{ padding: '12px 16px', textAlign: 'center', fontWeight: 700, fontSize: '14px', color: '#374151' }}>
+                      Total Emigrants
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {forecasts.map((f, i) => (
-                    <tr 
-                      key={i} 
-                      style={{ 
-                        background: i % 2 === 0 ? '#ffffff' : '#f9fbfd',
-                        borderBottom: i === forecasts.length - 1 ? 'none' : '1px solid #e5e7eb'
-                      }}
-                    >
-                      <td style={{ 
-                        padding: '12px 16px',
-                        textAlign: 'center',
-                        fontSize: '14px',
-                        color: '#111827',
-                        fontWeight: 600
-                      }}>
+                    <tr key={i} style={{ 
+                      background: i % 2 === 0 ? '#ffffff' : '#f9fbfd',
+                      borderBottom: i === forecasts.length - 1 ? 'none' : '1px solid #e5e7eb'
+                    }}>
+                      <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: 600 }}>
                         {f.year}
                       </td>
-                      <td style={{ 
-                        padding: '12px 16px', 
-                        textAlign: 'center',
-                        fontSize: '14px',
-                        color: '#0f172a',
-                        fontWeight: 700
-                      }}>
+                      {metadata?.breakdownKeys && metadata.breakdownKeys.length > 0 && 
+                        (() => {
+                          const ageOrder = ['0-14', '15-24', '25-34', '35-44', '45-54', '55-64', '65+', 'Not Reported'];
+                          const sortedKeys = [...metadata.breakdownKeys].sort((a, b) => {
+                            const indexA = ageOrder.indexOf(a);
+                            const indexB = ageOrder.indexOf(b);
+                            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                            if (indexA !== -1) return -1;
+                            if (indexB !== -1) return 1;
+                            return a.localeCompare(b);
+                          });
+                          return sortedKeys.map(key => (
+                            <td key={key} style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px' }}>
+                              {f.breakdown?.[key]?.toLocaleString() || 'N/A'}
+                            </td>
+                          ));
+                        })()
+                      }
+                      <td style={{ padding: '12px 16px', textAlign: 'center', fontSize: '14px', fontWeight: 700 }}>
                         {f.emigrants?.toLocaleString() || 'N/A'}
                       </td>
                     </tr>

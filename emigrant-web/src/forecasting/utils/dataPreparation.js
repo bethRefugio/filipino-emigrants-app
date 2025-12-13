@@ -10,7 +10,8 @@ export function cleanData(data) {
   return data.map(row => ({
     year: parseInt(row.year) || 0,
     population: parseFloat(row.population) || 0,
-    emigrants: parseFloat(row.emigrants) || 0
+    emigrants: parseFloat(row.emigrants) || 0,
+    breakdown: row.breakdown || {} // Preserve breakdown object
   }));
 }
 
@@ -31,18 +32,34 @@ export function normalizeData(data, features = ['population', 'emigrants']) {
 
   // Calculate min and max for each feature
   features.forEach(feature => {
-    const values = data.map(row => row[feature]);
+    const values = data.map(row => {
+      // Handle breakdown keys
+      if (row.breakdown && feature in row.breakdown) {
+        return row.breakdown[feature];
+      }
+      return row[feature] || 0;
+    }).filter(v => v !== null && v !== undefined);
+    
     mins[feature] = Math.min(...values);
     maxs[feature] = Math.max(...values);
   });
 
   // Normalize data
   const normalized = data.map(row => {
-    const normalizedRow = { ...row };
+    const normalizedRow = { year: row.year };
+    
     features.forEach(feature => {
+      let value;
+      if (row.breakdown && feature in row.breakdown) {
+        value = row.breakdown[feature];
+      } else {
+        value = row[feature] || 0;
+      }
+      
       const range = maxs[feature] - mins[feature];
-      normalizedRow[feature] = range === 0 ? 0 : (row[feature] - mins[feature]) / range;
+      normalizedRow[feature] = range === 0 ? 0 : (value - mins[feature]) / range;
     });
+    
     return normalizedRow;
   });
 
@@ -119,4 +136,47 @@ export function calculateMetrics(actual, predicted) {
     r2: r2.toFixed(4),
     accuracy: accuracy.toFixed(2)
   };
+}
+
+export function createSequencesWithBreakdown(normalized, lookback, features, target, breakdownKeys) {
+  const sequences = [];
+  const targets = [];
+
+  for (let i = lookback; i < normalized.length; i++) {
+    // Create sequence: lookback steps, each with all features
+    const sequence = [];
+    for (let j = i - lookback; j < i; j++) {
+      // Extract feature values for each timestep
+      const featureValues = features.map(f => normalized[j][f] || 0);
+      sequence.push(featureValues);
+    }
+    sequences.push(sequence);
+
+    // Target includes total + all breakdown categories
+    const targetRow = normalized[i];
+    const targetValues = [targetRow[target] || 0];
+    
+    // Add breakdown values
+    breakdownKeys.forEach(key => {
+      targetValues.push(targetRow[key] || 0);
+    });
+    
+    targets.push(targetValues);
+  }
+
+  return { X: sequences, y: targets };
+}
+
+export function denormalizeBreakdown(prediction, mins, maxs, target, breakdownKeys) {
+  const result = {};
+  
+  // Denormalize total
+  result[target] = denormalize(prediction[0], mins[target], maxs[target]);
+  
+  // Denormalize each breakdown category
+  breakdownKeys.forEach((key, idx) => {
+    result[key] = denormalize(prediction[idx + 1], mins[key], maxs[key]);
+  });
+  
+  return result;
 }
