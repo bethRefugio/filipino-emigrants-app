@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { loginUser } from '../services/login';
 import loginPhoto from '../assets/login-photo.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Login() {
   const [identifier, setIdentifier] = useState('');
@@ -112,9 +112,9 @@ export default function Login() {
             {/* Sign Up Link */}
             <p className="text-center text-gray-600 mt-2">
               Don't have an account?{' '}
-              <a href="/register" className="font-bold text-cyan-600 hover:text-cyan-700 transition-colors underline">
+              <Link to="/register" className="font-bold text-cyan-600 hover:text-cyan-700 transition-colors underline">
                 Sign up
-              </a>
+              </Link>
             </p>
           </form>
         </div>

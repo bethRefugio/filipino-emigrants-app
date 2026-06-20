@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { registerUser } from '../services/register';
 import loginPhoto from '../assets/login-photo.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Register() {
   const [form, setForm] = useState({
@@ -228,9 +228,9 @@ export default function Register() {
             {/* Login Link */}
             <p className="text-center text-gray-600 mt-2">
               Already have an account?{' '}
-              <a href="/login" className="font-bold text-cyan-600 hover:text-cyan-700 transition-colors underline">
+              <Link to="/login" className="font-bold text-cyan-600 hover:text-cyan-700 transition-colors underline">
                 Log in
-              </a>
+              </Link>
             </p>
           </form>
         </div>
