@@ -27,5 +27,4 @@ dist-ssr
 filipinoemigrantsdb-*.json
 **/filipinoemigrantsdb-*.json
 
-# Ignore firebase runtime config
-src/firebase.js
+.env

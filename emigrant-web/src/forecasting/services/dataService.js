@@ -1,5 +1,5 @@
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase'; // Changed from '../firebase' to '../../firebase'
+import { db } from '../../firebase';
 
 export const AVAILABLE_DATASETS = [
   { id: 'sex', name: 'Sex/Gender', flatStructure: true },
